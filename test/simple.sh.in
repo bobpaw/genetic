@@ -1,0 +1,3 @@
+#!/bin/sh
+
+@top_srcdir@/src/simple_test > /dev/null
