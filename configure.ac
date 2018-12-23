@@ -3,11 +3,13 @@
 
 AC_PREREQ([2.69])
 AC_INIT([genetic], [0.1.0], [aiden.woodruff@gmail.com])
-AC_CONFIG_SRCDIR([src/gen_alg.c])
+AC_CONFIG_SRCDIR([src/gen_alg.cc])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CXXCPP
+AC_LANG([C++])
 
 # Checks for libraries.
 AC_CHECK_LIB([ncurses], [initscr])
