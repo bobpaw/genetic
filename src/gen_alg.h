@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
 #ifndef GENETIC_GEN_ALG_H_
 #define GENETIC_GEN_ALG_H_
