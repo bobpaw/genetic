@@ -26,6 +26,7 @@ addons:
     - autoconf
     - perl
     - m4
+    - autoconf-archive
   homebrew:
     packages:
     - ncurses-base
@@ -35,6 +36,7 @@ addons:
     - autoconf
     - perl
     - m4
+    - autoconf-archive
 
 # Actually check if it works
 script:
