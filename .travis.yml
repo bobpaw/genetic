@@ -22,11 +22,19 @@ addons:
     - ncurses-base
     - libncurses-dev
     - valgrind
+    - automake
+    - autoconf
+    - perl
+    - m4
   homebrew:
     packages:
     - ncurses-base
     - libncurses-dev
     - valgrind
+    - automake
+    - autoconf
+    - perl
+    - m4
 
 # Actually check if it works
 script:
