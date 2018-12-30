@@ -27,4 +27,4 @@ addons:
 
 # Actually check if it works
 script:
-  - ./configure && make && make check && valgrind src/simple_test
+  - ./configure && make && make check && valgrind --leak-check=full src/simple_test
