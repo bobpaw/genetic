@@ -25,6 +25,7 @@ AC_TYPE_SIZE_T
 AC_FUNC_MALLOC
 # AC_CHECK_FUNCS([memset strdup strtol])
 
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/simple.sh], [chmod +x test/simple.sh])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
+AC_CONFIG_FILES([test/simple.sh], [chmod +x test/simple.sh])
 AM_INIT_AUTOMAKE
 AC_OUTPUT
