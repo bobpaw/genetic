@@ -10,6 +10,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX([14])
 
 # Checks for libraries.
 AC_CHECK_LIB([ncurses], [initscr])
