@@ -38,5 +38,4 @@ addons:
 
 # Actually check if it works
 script:
-  - ./configure && make && make check
-  - valgrind src/simple_test
+  - autoreconf && ./configure && make && make check && valgrind src/simple_test
