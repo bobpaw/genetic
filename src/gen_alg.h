@@ -22,25 +22,29 @@ namespace gen_alg {
 		std::vector<std::string> data_;
 		std::vector<std::string> mid_gen;
 		std::string correct_;
-		int chance_;
-		int population_;
-		unsigned long gen_idx;
-		int maxsize_;
-		int max_;
-		int sum_;
-		float avg_;
-		float mad_;
+		int chance_{0};
+		int population_{0};
+		unsigned long gen_idx{0};
+		int maxsize_{0};
+		int max_{0};
+		int sum_{0};
+		bool one_{false};
+		float avg_{0.0};
+		float mad_{0.0};
 		std::vector<int> fitness;
 
 		using dataIndex_t = decltype(data_)::size_type;
 		using fitnessIndex_t = decltype(fitness)::size_type;
 
 	public:
-		// Getters
+		// Getters and Normal (ref) Setters
 		auto generations (void) const { return gen_idx; }
 		auto genome (dataIndex_t i) const { return data_[i]; }
+		auto genome_fitness (fitnessIndex_t i) const { return fitness[i]; }
 		auto pop_size (void) const { return population_; }
 		auto chance (void) const { return chance_; }
+		auto &chance (void) { return chance_; }
+		auto one (void) const { return one_; }
 		auto max (void) const { return max_; }
 		auto sum (void) const { return sum_; }
 		auto avg (void) const { return avg_; }
@@ -63,6 +67,7 @@ namespace gen_alg {
 		static void recombine (std::string &genotype_a, std::string &genotype_b);
 		void mutate (dataIndex_t i);
 		dataIndex_t rand_genome (void);
+		void statistics (void);
 		Genetic &operator++ (void);
 	};
 } // namespace gen_alg

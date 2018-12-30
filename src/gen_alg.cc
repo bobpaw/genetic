@@ -9,8 +9,9 @@ namespace gen_alg {
 		chance_(chance),
 		correct_(correct),
 		maxsize_(maxsize),
+		gen_idx(0),
 		// Stats
-		max_(0), sum_(0), avg_(0.0), mad_(0.0),
+		one_(false), max_(0), sum_(0), avg_(0.0), mad_(0.0),
 		// Vectors
 		data_(pop_size, std::string(maxsize, ' ')),
 		mid_gen(pop_size),
@@ -53,9 +54,12 @@ namespace gen_alg {
 		return ret;
 	}
 
-	Genetic &Genetic::operator++ (void) {
-		for (dataIndex_t i = 0; i < population_; ++i)
+	// Calculate and update stats
+	void Genetic::statistics (void) {
+		for (dataIndex_t i = 0; i < population_; ++i) {
 			fitness[static_cast<fitnessIndex_t>(i)] = evaluate(i);
+			if (fitness[static_cast<fitnessIndex_t>(i)] == maxsize_) one_ = true;
+		}
 		sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
 		max_ = *std::max_element(fitness.begin(), fitness.end());
 		/* auto avg = avg_ = sum_ / population_;
@@ -63,6 +67,10 @@ namespace gen_alg {
 		std::transform(fitness.begin(), fitness.end(), dev.begin(), [avg](const float &x) {return std::abs(x - avg);});
 		mad_ = std::accumulate(dev.begin(), dev.end(), 0.0); */
 		// mad_ /= population_;
+	}
+
+	Genetic &Genetic::operator++ (void) {
+		statistics();
 		for (dataIndex_t i = 0; i < population_; ++i)
 			mid_gen[i] = data_[rand_genome()];
 		for (dataIndex_t i = 0; i < population_; i += 2)
