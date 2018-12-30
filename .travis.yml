@@ -4,30 +4,17 @@ language: cpp
 git:
   depth: false
 
+dist: xenial
+
 # Test both clang and gcc
 compiler:
   - clang
   - gcc
 
-# Test both linux and osx
-os:
-  - linux
-  - osx
-
 # Install requirements with apt
 addons:
   apt:
     update: true
-    packages:
-    - ncurses-base
-    - libncurses-dev
-    - valgrind
-    - automake
-    - autoconf
-    - perl
-    - m4
-    - autoconf-archive
-  homebrew:
     packages:
     - ncurses-base
     - libncurses-dev
