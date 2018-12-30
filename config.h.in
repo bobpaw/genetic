@@ -6,6 +6,9 @@
 /* Define to 1 if you have the <cstdlib> header file. */
 #undef HAVE_CSTDLIB
 
+/* define if the compiler supports basic C++14 syntax */
+#undef HAVE_CXX14
+
 /* Define to 1 if you have the <functional> header file. */
 #undef HAVE_FUNCTIONAL
 
