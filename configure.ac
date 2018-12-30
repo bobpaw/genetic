@@ -5,6 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([genetic], [0.1.0], [aiden.woodruff@gmail.com])
 AC_CONFIG_SRCDIR([src/gen_alg.cc])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CXX
