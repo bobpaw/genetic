@@ -40,4 +40,4 @@ addons:
 
 # Actually check if it works
 script:
-  - automake -a && ./configure && make && make check && valgrind src/simple_test
+  - ./configure && make && make check && valgrind src/simple_test
