@@ -1,3 +1,3 @@
 AM_OPTIONS = gnu
-AM_CFLAGS = -Wall -Wextra -pedantic
+AM_CXXFLAGS = -Wall -Wextra -pedantic
 SUBDIRS = src test

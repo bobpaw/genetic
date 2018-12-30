@@ -13,17 +13,17 @@ AC_LANG([C++])
 
 # Checks for libraries.
 AC_CHECK_LIB([ncurses], [initscr])
-AC_CHECK_LIB([m], [fabs])
+# AC_CHECK_LIB([m], [fabs])
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h string.h time.h stdio.h string.h])
+AC_CHECK_HEADERS([iostream string numeric algorithm utility vector random functional cstdlib])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memset strdup strtol])
+# AC_CHECK_FUNCS([memset strdup strtol])
 
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/simple.sh], [chmod +x test/simple.sh])
 AM_INIT_AUTOMAKE
