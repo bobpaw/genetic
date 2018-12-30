@@ -1,55 +1,77 @@
 #include "gen_alg.h"
 
-#define OK 0
-#define ERR -1
+namespace gen_alg {
+	auto random = std::bind(std::uniform_int_distribution<int>(0, 100),
+		std::default_random_engine(std::random_device()()));
 
-// Evaluation function for each genotype
-int evaluate (const char * genotype, const char * correct) {
-  int sum = 1;
-  for (int i = 0; i < strlen(genotype); i++) {
-    if (genotype[i] == correct[i]) {
-      sum++;
-    }
-  }
-  return sum;
-}
+	Genetic::Genetic (int pop_size, int chance, std::string correct, int maxsize) :
+		population_(pop_size),
+		chance_(chance),
+		correct_(correct),
+		maxsize_(maxsize),
+		// Stats
+		max_(0), sum_(0), avg_(0.0), mad_(0.0),
+		// Vectors
+		data_(pop_size, std::string(maxsize, ' ')),
+		mid_gen(pop_size),
+		fitness(pop_size) {
+		for (auto &i : data_) {
+			for (auto &s : i) {
+				s = alphabet[random() % alphabet.size()];
+			}
+		}
+	}
 
-// Breed strings WARNING: This will modify them.
-int recombine (char * genotype_a, char * genotype_b) {
-  int length = (strlen(genotype_a) > strlen(genotype_b) ? strlen(genotype_a) : strlen(genotype_b));
-  char ** ret = calloc(sizeof(char*), 2);
-  ret[0] = calloc(strlen(genotype_a) + 1, sizeof(char));
-  ret[1] = calloc(strlen(genotype_b) + 1, sizeof(char));
-  strcpy(ret[0], genotype_a);
-  strcpy(ret[1], genotype_b);
-  int split = rand() % length;
-  if (
-      strncpy(genotype_a, ret[1], split) != genotype_a ||
-      strncpy(genotype_b, ret[0], split) != genotype_b
-      ) return ERR;
-  free(ret[0]);
-  free(ret[1]);
-  free(ret);
-  return OK;
-}
+	int Genetic::evaluate (dataIndex_t genotype) {
+		int sum = 1;
+		for (decltype(correct_.size()) i = 0; i < data_[genotype].size(); ++i)
+			if (data_[genotype][i] == correct_[i]) ++sum;
+		return sum;
+	}
 
-// Randomly mutate; modifies string
-int mutate (char ** genotype, const int chance, size_t maxlen) {
-  const char * alphabet = "abcdefghijklmnopqrstuvwxyz ";
-  char * newgen = strdup(*genotype);
-  if (rand() % 100 < chance) {
-    if (strlen(*genotype) < maxlen && rand() % 100 < 50) {
-      size_t length = strlen(*genotype);
-      free(newgen);
-      newgen = malloc(length + 2);
-      memset(newgen, 0, length + 2);
-      strcpy(newgen, *genotype);
-      newgen[length + 1] = alphabet[rand() % 27];
-    } else {
-      newgen[rand() % strlen(*genotype)] = alphabet[rand() % 27];
-    }
-  }
-  free(*genotype);
-  *genotype = newgen;
-  return OK;
-}
+	void Genetic::recombine (std::string &genotype_a, std::string &genotype_b) {
+		int length = (genotype_a.size() < genotype_b.size() ? genotype_a.size() : genotype_b.size());
+		auto ret = std::make_pair(std::string(), std::string());
+		int split = random() % length;
+		ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
+		ret.second = genotype_a.substr(0, split) + genotype_b.substr(split);
+		genotype_a = ret.first;
+		genotype_b = ret.second;
+	}
+
+	void Genetic::mutate (dataIndex_t i) {
+		if (random() < chance_) {
+			data_[i][random() % data_[i].size()] = alphabet[random() % alphabet.size()];
+		}
+	}
+
+	Genetic::dataIndex_t Genetic::rand_genome (void) {
+		int number = random() % sum_;
+		dataIndex_t ret = 0;
+		for (; ret < population_ != number < fitness[ret]; ++ret)
+			number -= fitness[ret];
+		return ret;
+	}
+
+	Genetic &Genetic::operator++ (void) {
+		for (dataIndex_t i = 0; i < population_; ++i)
+			fitness[static_cast<fitnessIndex_t>(i)] = evaluate(i);
+		sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
+		max_ = *std::max_element(fitness.begin(), fitness.end());
+		/* auto avg = avg_ = sum_ / population_;
+		std::vector<decltype(avg_)> dev(fitness.size());
+		std::transform(fitness.begin(), fitness.end(), dev.begin(), [avg](const float &x) {return std::abs(x - avg);});
+		mad_ = std::accumulate(dev.begin(), dev.end(), 0.0); */
+		// mad_ /= population_;
+		for (dataIndex_t i = 0; i < population_; ++i)
+			mid_gen[i] = data_[rand_genome()];
+		for (dataIndex_t i = 0; i < population_; i += 2)
+			recombine(mid_gen[i], mid_gen[i + 1]);
+		for (dataIndex_t i = 0; i < population_; ++i) {
+			data_[i] = mid_gen[i];
+			mutate(i);
+		}
+		++gen_idx;
+		return *this;
+	}
+} // namespace gen_alg
