@@ -88,7 +88,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = genetic$(EXEEXT)
-check_PROGRAMS = simple_test$(EXEEXT)
+check_PROGRAMS = simple_test$(EXEEXT) random_inrange$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
@@ -106,6 +106,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_genetic_OBJECTS = main.$(OBJEXT) gen_alg.$(OBJEXT)
 genetic_OBJECTS = $(am_genetic_OBJECTS)
 genetic_LDADD = $(LDADD)
+am_random_inrange_OBJECTS = random_inrange.$(OBJEXT)
+random_inrange_OBJECTS = $(am_random_inrange_OBJECTS)
+random_inrange_LDADD = $(LDADD)
 am_simple_test_OBJECTS = simple_test.$(OBJEXT) gen_alg.$(OBJEXT)
 simple_test_OBJECTS = $(am_simple_test_OBJECTS)
 simple_test_LDADD = $(LDADD)
@@ -150,8 +153,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(genetic_SOURCES) $(simple_test_SOURCES)
-DIST_SOURCES = $(genetic_SOURCES) $(simple_test_SOURCES)
+SOURCES = $(genetic_SOURCES) $(random_inrange_SOURCES) \
+	$(simple_test_SOURCES)
+DIST_SOURCES = $(genetic_SOURCES) $(random_inrange_SOURCES) \
+	$(simple_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -271,6 +276,7 @@ top_srcdir = @top_srcdir@
 noinst_HEADERS = gen_alg.h
 genetic_SOURCES = main.cc main.h gen_alg.cc
 simple_test_SOURCES = simple_test.cc gen_alg.cc
+random_inrange_SOURCES = random_inrange.cc
 all: all-am
 
 .SUFFIXES:
@@ -354,6 +360,10 @@ genetic$(EXEEXT): $(genetic_OBJECTS) $(genetic_DEPENDENCIES) $(EXTRA_genetic_DEP
 	@rm -f genetic$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(genetic_OBJECTS) $(genetic_LDADD) $(LIBS)
 
+random_inrange$(EXEEXT): $(random_inrange_OBJECTS) $(random_inrange_DEPENDENCIES) $(EXTRA_random_inrange_DEPENDENCIES) 
+	@rm -f random_inrange$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(random_inrange_OBJECTS) $(random_inrange_LDADD) $(LIBS)
+
 simple_test$(EXEEXT): $(simple_test_OBJECTS) $(simple_test_DEPENDENCIES) $(EXTRA_simple_test_DEPENDENCIES) 
 	@rm -f simple_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(simple_test_OBJECTS) $(simple_test_LDADD) $(LIBS)
@@ -366,6 +376,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gen_alg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/random_inrange.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_test.Po@am__quote@
 
 .cc.o:

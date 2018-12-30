@@ -29,5 +29,6 @@ AC_FUNC_MALLOC
 
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 AC_CONFIG_FILES([test/simple.sh], [chmod +x test/simple.sh])
+AC_CONFIG_FILES([test/rand_range.sh], [chmod +x test/rand_range.sh])
 AM_INIT_AUTOMAKE
 AC_OUTPUT

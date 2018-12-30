@@ -1,8 +1,16 @@
 #include "gen_alg.h"
 
+#ifndef NDEBUG
+#include "fakerandom.h"
+#endif
+
 namespace gen_alg {
+	#ifndef NDEBUG
+	auto random = fakerandom::rand_device(0, 100);
+	#else
 	auto random = std::bind(std::uniform_int_distribution<int>(0, 100),
 		std::default_random_engine(std::random_device()()));
+	#endif
 
 	Genetic::Genetic (int pop_size, int chance, std::string correct, int maxsize) :
 		population_(pop_size),
@@ -31,7 +39,7 @@ namespace gen_alg {
 	}
 
 	void Genetic::recombine (std::string &genotype_a, std::string &genotype_b) {
-		int length = (genotype_a.size() < genotype_b.size() ? genotype_a.size() : genotype_b.size());
+		int length = std::min(genotype_a.size(), genotype_b.size());
 		auto ret = std::make_pair(std::string(), std::string());
 		int split = random() % length;
 		ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
