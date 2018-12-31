@@ -3,26 +3,32 @@
 
 AC_PREREQ([2.69])
 AC_INIT([genetic], [0.1.0], [aiden.woodruff@gmail.com])
-AC_CONFIG_SRCDIR([src/gen_alg.c])
+AC_CONFIG_SRCDIR([src/gen_alg.cc])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CXXCPP
+AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX([14])
 
 # Checks for libraries.
 AC_CHECK_LIB([ncurses], [initscr])
-AC_CHECK_LIB([m], [fabs])
+# AC_CHECK_LIB([m], [fabs])
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h string.h time.h stdio.h string.h])
+AC_CHECK_HEADERS([iostream string numeric algorithm utility vector random functional cstdlib])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memset strdup strtol])
+# AC_CHECK_FUNCS([memset strdup strtol])
 
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/simple.sh], [chmod +x test/simple.sh])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
+AC_CONFIG_FILES([test/simple.sh], [chmod +x test/simple.sh])
+AC_CONFIG_FILES([test/rand_range.sh], [chmod +x test/rand_range.sh])
 AM_INIT_AUTOMAKE
 AC_OUTPUT

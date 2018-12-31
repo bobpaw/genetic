@@ -1,0 +1,31 @@
+language: cpp
+
+# Save time by only getting the current repository status
+git:
+  depth: false
+
+dist: xenial
+
+# Test both clang and gcc
+compiler:
+  - clang
+  - gcc
+
+# Install requirements with apt
+addons:
+  apt:
+    update: true
+    packages:
+    - ncurses-base
+    - libncurses-dev
+    - valgrind
+    - automake
+    - autoconf
+    - perl
+    - m4
+    - autoconf-archive
+
+# Actually check if it works
+script:
+  - autoreconf -f && ./configure && make && make check
+  - test -x "src/simple_test" && valgrind --leak-check=full --show-leak-kinds=all src/simple_test
