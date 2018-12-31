@@ -1,11 +1,11 @@
 #include "gen_alg.h"
 
-#ifndef NDEBUG
+#ifdef VALGRIND_DEBUG
 #include "fakerandom.h"
 #endif
 
 namespace gen_alg {
-	#ifndef NDEBUG
+	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
 	auto random = std::bind(std::uniform_int_distribution<int>(0, 100),
