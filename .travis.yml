@@ -28,4 +28,4 @@ addons:
 # Actually check if it works
 script:
   - autoreconf -f && ./configure && make && make check
-  - test -x "src/simple_test" && valgrind --leak-check=full src/simple_test
+  - test -x "src/simple_test" && valgrind --leak-check=full --show-leak-kinds=all src/simple_test
