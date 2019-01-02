@@ -24,18 +24,24 @@ namespace gen_alg {
 		data_(pop_size, std::string(maxsize, ' ')),
 		mid_gen(pop_size),
 		fitness(pop_size) {
-		for (auto &i : data_) {
-			for (auto &s : i) {
-				s = alphabet[random() % alphabet.size()];
-			}
-		}
+		for (auto &i : data_) for (auto &c : i) c = alphabet[random() % alphabet.size()];
+	}
+
+	Genetic &Genetic::setPop_size (int size) {
+		data_.resize(size);
+		for (Genetic::dataIndex_t i = population_; i < size; ++i) for (auto &c : data_[i])
+			c = alphabet[random() % alphabet.size()];
+		fitness.resize(size);
+		mid_gen.resize(size);
+		population_ = size;
+		return *this;
 	}
 
 	int Genetic::evaluate (dataIndex_t genotype) {
 		int sum = 1;
 		for (decltype(correct_.size()) i = 0; i < data_[genotype].size(); ++i)
 			if (data_[genotype][i] == correct_[i]) ++sum;
-		return sum;
+		return sum * sum;
 	}
 
 	void Genetic::recombine (std::string &genotype_a, std::string &genotype_b) {
@@ -62,6 +68,8 @@ namespace gen_alg {
 		return ret;
 	}
 
+	static inline auto abs (const auto &x) { return x < 0 ? -1 * x : x; }
+
 	// Calculate and update stats
 	void Genetic::statistics (void) {
 		for (dataIndex_t i = 0; i < population_; ++i) {
@@ -70,11 +78,11 @@ namespace gen_alg {
 		}
 		sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
 		max_ = *std::max_element(fitness.begin(), fitness.end());
-		/* auto avg = avg_ = sum_ / population_;
-		std::vector<decltype(avg_)> dev(fitness.size());
-		std::transform(fitness.begin(), fitness.end(), dev.begin(), [avg](const float &x) {return std::abs(x - avg);});
-		mad_ = std::accumulate(dev.begin(), dev.end(), 0.0); */
-		// mad_ /= population_;
+		auto avg = avg_ = sum_ / population_;
+		mad_ = std::accumulate(fitness.begin(), fitness.end(), 0.0, [avg](const auto &cursum, const auto &x){
+			return cursum + abs(x - avg);
+		});
+		mad_ /= population_;
 	}
 
 	Genetic &Genetic::operator++ (void) {

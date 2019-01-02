@@ -14,6 +14,8 @@ int main (int argc, char * argv[]) {
 	gen_alg::Genetic hello(20, 3, "hello world");
 	std::string chance_str(4, ' ');
 	char c_chance_str[4] = "";
+	std::string pop_str;
+	char c_pop_str[32] = "";
 
 	initscr();
 	if (!has_colors()) {
@@ -51,7 +53,7 @@ int main (int argc, char * argv[]) {
 		printw("Max evaluation: %d\n", hello.max());
 		printw("Average evaluation: %.2f\n", hello.avg());
 		printw("Mean Average Deveation eval: %.2f\n", hello.mad());
-		stat_bar_print(stat_bar, "M - set mutate chance\tS - set correct string\tP - set population size");
+		stat_bar_print(stat_bar, "m - set mutate chance\tS - set correct string\tp - set population size");
 		refresh();
 		wrefresh(entry);
 		wrefresh(stat_bar);
@@ -62,10 +64,12 @@ int main (int argc, char * argv[]) {
 			}
 			++hello;
 		} else {
-			if (ch == ' ') {
+			switch (ch) {
+			case ' ':
 				playing = true;
 				timeout(10);
-			} else if (ch == 'm') {
+				break;
+			case 'm':
 				werase(stat_bar);
 				stat_bar_print(stat_bar, "Mutate chance - currently: %d", hello.chance());
 				wrefresh(stat_bar);
@@ -74,12 +78,25 @@ int main (int argc, char * argv[]) {
 				echo();
 				wgetnstr(entry, c_chance_str, 3);
 				chance_str.assign(c_chance_str);
-				if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) {
-					hello.chance() = std::stoi(chance_str);
-				}
+				if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) hello.chance() = std::stoi(chance_str);
 				noecho();
 				curs_set(0);
 				werase(entry);
+				break;
+			case 'p':
+				werase(stat_bar);
+				stat_bar_print(stat_bar, "Population size - currently: %d", hello.pop_size());
+				wrefresh(stat_bar);
+				refresh();
+				curs_set(1);
+				echo();
+				wgetnstr(entry, c_pop_str, 31);
+				pop_str.assign(c_pop_str);
+				if (std::stoi(pop_str) > 1) hello.setPop_size(std::stoi(pop_str));
+				noecho();
+				curs_set(0);
+				werase(entry);
+				break;
 			}
 		}
 		ch = getch();

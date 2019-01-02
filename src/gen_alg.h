@@ -51,13 +51,7 @@ namespace gen_alg {
 		auto mad (void) const { return mad_; }
 
 		// Special Setters
-		Genetic &setPop_size (int size) {
-			population_ = size;
-			data_.resize(size);
-			fitness.resize(size);
-			mid_gen.resize(size);
-			return *this;
-		}
+		Genetic &setPop_size (int size);
 
 		// Constructors
 		Genetic (int population_size, int chance, std::string correct) : Genetic(population_size, chance, correct, correct.size()) {}
