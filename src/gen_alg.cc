@@ -8,8 +8,8 @@ namespace gen_alg {
 	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
-	auto random = std::bind(std::uniform_int_distribution<int>(0, 100),
-		std::default_random_engine(std::random_device()()));
+	auto random = [engine = std::default_random_engine(std::random_device()()] (void) {
+		return std::uniform_int_distribution<int>(0, 100)(engine); };
 	#endif
 
 	Genetic::Genetic (int pop_size, int chance, std::string correct, int maxsize) :
