@@ -94,7 +94,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = simple.sh rand_range.sh
+CONFIG_CLEAN_FILES = simple.sh rand_range.sh expand.sh
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -320,8 +320,9 @@ TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/rand_range.sh.in \
-	$(srcdir)/simple.sh.in $(top_srcdir)/test-driver
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/expand.sh.in \
+	$(srcdir)/rand_range.sh.in $(srcdir)/simple.sh.in \
+	$(top_srcdir)/test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -412,7 +413,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-check_SCRIPTS = simple.sh rand_range.sh
+check_SCRIPTS = simple.sh rand_range.sh expand.sh
 TESTS = $(check_SCRIPTS)
 all: all-am
 
@@ -450,6 +451,8 @@ $(am__aclocal_m4_deps):
 simple.sh: $(top_builddir)/config.status $(srcdir)/simple.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 rand_range.sh: $(top_builddir)/config.status $(srcdir)/rand_range.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+expand.sh: $(top_builddir)/config.status $(srcdir)/expand.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 tags TAGS:
 
@@ -609,6 +612,13 @@ simple.sh.log: simple.sh
 rand_range.sh.log: rand_range.sh
 	@p='rand_range.sh'; \
 	b='rand_range.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+expand.sh.log: expand.sh
+	@p='expand.sh'; \
+	b='expand.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
