@@ -3,7 +3,7 @@
 #ifndef stat_bar_print
 // Print text to status bar in the nice way, without erasing or refreshing
 #define stat_bar_print(win,...)																		\
-	wprintw(win, __VA_ARGS__);																		 \
+	mvwprintw(win, 0, 0, __VA_ARGS__);																		 \
 	for (int _i = getcurx(win); _i < COLS; _i++) waddch(win, ' ');
 #endif
 
@@ -27,56 +27,61 @@ int main (int argc, char * argv[]) {
 	raw();
 	curs_set(0);
 	noecho();
-	timeout(-1);
+	WINDOW * board = newwin(LINES - 2, 0, 0, 0);
 	WINDOW * stat_bar = newwin(1, 0, LINES - 2, 0);
 	WINDOW * entry = newwin(1, 0, LINES - 1, 0);
 	wstandout(stat_bar);
+	wtimeout(board, -1);
 	int ch = 0;
 	bool playing = false;
-	while (!hello.one() && ch != 'q') {
-		erase();
-		werase(stat_bar);
+	while (ch != 'q') {
+		werase(board);
 		werase(entry);
+		werase(stat_bar);
 		hello.statistics();
-		printw("Generation %d\n", hello.generations());
-		printw("[");
+		mvwprintw(board, 0, 0, "Generation %lu\n[\n", hello.generations());
 		for (int i = 0; i < hello.pop_size(); ++i) {
+			if (getcurx(board) + hello.maxsize() + 4 > COLS) waddch(board, '\n');
 			if (hello.genome_fitness(i) == hello.max()) {
-				attron(COLOR_PAIR(1));
-				printw("\"%s\"", hello.genome(i).c_str());
-				attroff(COLOR_PAIR(1));
+				wattron(board, COLOR_PAIR(1));
+				wprintw(board, "\"%s\"", hello.genome(i).c_str());
+				wattroff(board, COLOR_PAIR(1));
 			} else {
-				printw("\"%s\"", hello.genome(i).c_str());
+				wprintw(board, "\"%s\"", hello.genome(i).c_str());
 			}
-			printw(i == hello.pop_size() - 1 ? "]\n" : ", ");
+			wprintw(board, i == hello.pop_size() - 1 ? "]\n" : ", ");
 		}
-		printw("Max evaluation: %d\n", hello.max());
-		printw("Average evaluation: %.2f\n", hello.avg());
-		printw("Mean Average Deveation eval: %.2f\n", hello.mad());
-		stat_bar_print(stat_bar, "m - set mutate chance\tS - set correct string\tp - set population size");
-		refresh();
-		wrefresh(entry);
-		wrefresh(stat_bar);
-		if (playing) {
+		wprintw(board, "Max evaluation: %d\n", hello.max());
+		wprintw(board, "Average evaluation: %.2f\n", hello.avg());
+		wprintw(board, "Mean Average Deveation eval: %.2f\n", hello.mad());
+		if (hello.one()) wprintw(board, "Wow, one is correct!");
+		stat_bar_print(stat_bar, "m - set mutate chance    S - set correct string    p - set population size");
+		wnoutrefresh(board);
+		wnoutrefresh(entry);
+		wnoutrefresh(stat_bar);
+		doupdate();
+		if (hello.one()) {
+			playing = false;
+			wtimeout(board, -1);
+		} else if (playing) {
 			if (ch == ' ') {
 				playing = false;
-				timeout(-1);
+				wtimeout(board, -1);
+			} else {
+				++hello;
 			}
-			++hello;
 		} else {
 			switch (ch) {
 			case ' ':
 				playing = true;
-				timeout(10);
+				wtimeout(board, 10);
 				break;
 			case 'm':
-				werase(stat_bar);
 				stat_bar_print(stat_bar, "Mutate chance - currently: %d", hello.chance());
 				wrefresh(stat_bar);
-				refresh();
 				curs_set(1);
 				echo();
-				wgetnstr(entry, c_chance_str, 3);
+				mvwgetnstr(entry, 0, 0, c_chance_str, 3);
 				chance_str.assign(c_chance_str);
 				if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) hello.chance() = std::stoi(chance_str);
 				noecho();
@@ -84,10 +89,9 @@ int main (int argc, char * argv[]) {
 				werase(entry);
 				break;
 			case 'p':
-				werase(stat_bar);
 				stat_bar_print(stat_bar, "Population size - currently: %d", hello.pop_size());
 				wrefresh(stat_bar);
-				refresh();
+				wmove(entry, 0, 0);
 				curs_set(1);
 				echo();
 				wgetnstr(entry, c_pop_str, 31);
@@ -99,12 +103,13 @@ int main (int argc, char * argv[]) {
 				break;
 			}
 		}
-		ch = getch();
+		ch = wgetch(board);
 	}
 	delwin(stat_bar);
 	delwin(entry);
+	delwin(board);
 	delwin(stdscr);
-	stat_bar = entry = nullptr;
+	board = stat_bar = entry = nullptr;
 	endwin();
 	return 0;
 }
