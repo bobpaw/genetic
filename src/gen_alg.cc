@@ -5,6 +5,7 @@
 #endif
 
 namespace gen_alg {
+	const std::string alphabet = "abcdegfhijklmnopqrstuvwxyz";
 	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
@@ -28,11 +29,15 @@ namespace gen_alg {
 	}
 
 	Genetic &Genetic::setPop_size (int size) {
-		data_.resize(size);
-		for (Genetic::dataIndex_t i = population_; i < size; ++i) for (auto &c : data_[i])
-			c = alphabet[random() % alphabet.size()];
+		data_.reserve(size);
+		for (Genetic::dataIndex_t i = population_; i < size; ++i) {
+			data_.emplace_back(maxsize_, ' ');
+			for (auto &c : data_.back()) c = alphabet[random() % alphabet.size()];
+		}
 		fitness.resize(size);
-		mid_gen.resize(size);
+
+		// mid_gen needs to be size divisible by 2
+		mid_gen.resize(size + (size % 2 == 0 ? 0 : 1));
 		population_ = size;
 		return *this;
 	}
@@ -41,7 +46,7 @@ namespace gen_alg {
 		int sum = 1;
 		for (decltype(correct_.size()) i = 0; i < data_[genotype].size(); ++i)
 			if (data_[genotype][i] == correct_[i]) ++sum;
-		return sum * sum;
+		return sum;
 	}
 
 	void Genetic::recombine (std::string &genotype_a, std::string &genotype_b) {
@@ -87,9 +92,9 @@ namespace gen_alg {
 
 	Genetic &Genetic::operator++ (void) {
 		statistics();
-		for (dataIndex_t i = 0; i < population_; ++i)
+		for (dataIndex_t i = 0; i < mid_gen.size(); ++i)
 			mid_gen[i] = data_[rand_genome()];
-		for (dataIndex_t i = 0; i < population_; i += 2)
+		for (dataIndex_t i = 0; i < mid_gen.size(); i += 2)
 			recombine(mid_gen[i], mid_gen[i + 1]);
 		for (dataIndex_t i = 0; i < population_; ++i) {
 			data_[i] = mid_gen[i];

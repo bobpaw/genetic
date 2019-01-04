@@ -15,8 +15,6 @@
 // int mutate (char ** genotype, const int chance, size_t maxlen);
 
 namespace gen_alg {
-	const std::string alphabet = "abcdegfhijklmnopqrstuvwxyz";
-
 	class Genetic {
 	private:
 		std::vector<std::string> data_;
@@ -38,17 +36,18 @@ namespace gen_alg {
 
 	public:
 		// Getters and Normal (ref) Setters
-		auto generations (void) const { return gen_idx; }
+		auto generations (void) const noexcept { return gen_idx; }
 		auto genome (dataIndex_t i) const { return data_[i]; }
 		auto genome_fitness (fitnessIndex_t i) const { return fitness[i]; }
-		auto pop_size (void) const { return population_; }
-		auto chance (void) const { return chance_; }
-		auto &chance (void) { return chance_; }
-		auto one (void) const { return one_; }
-		auto max (void) const { return max_; }
-		auto sum (void) const { return sum_; }
-		auto avg (void) const { return avg_; }
-		auto mad (void) const { return mad_; }
+		auto pop_size (void) const noexcept { return population_; }
+		auto chance (void) const noexcept { return chance_; }
+		auto &chance (void) noexcept { return chance_; }
+		auto one (void) const noexcept { return one_; }
+		auto max (void) const noexcept { return max_; }
+		auto sum (void) const noexcept { return sum_; }
+		auto avg (void) const noexcept { return avg_; }
+		auto mad (void) const noexcept { return mad_; }
+		auto maxsize (void) const noexcept { return maxsize_; }
 
 		// Special Setters
 		Genetic &setPop_size (int size);
