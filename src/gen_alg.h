@@ -19,17 +19,20 @@ namespace gen_alg {
 	private:
 		std::vector<std::string> data_;
 		std::vector<std::string> mid_gen;
+		std::vector<int> fitness;
 		std::string correct_;
 		int chance_{0};
 		int population_{0};
 		unsigned long gen_idx{0};
-		int maxsize_{0};
+		int minsize_{0};
+		int max_eval{0};
+		bool one_{false};
+
+		// Statistics
 		int max_{0};
 		int sum_{0};
-		bool one_{false};
 		float avg_{0.0};
 		float mad_{0.0};
-		std::vector<int> fitness;
 
 		using dataIndex_t = decltype(data_)::size_type;
 		using fitnessIndex_t = decltype(fitness)::size_type;
@@ -47,16 +50,16 @@ namespace gen_alg {
 		auto sum (void) const noexcept { return sum_; }
 		auto avg (void) const noexcept { return avg_; }
 		auto mad (void) const noexcept { return mad_; }
-		auto maxsize (void) const noexcept { return maxsize_; }
+		auto minsize (void) const noexcept { return minsize_; }
 
 		// Special Setters
 		Genetic &setPop_size (int size);
 
 		// Constructors
 		Genetic (int population_size, int chance, std::string correct) : Genetic(population_size, chance, correct, correct.size()) {}
-		Genetic (int pop_size, int chance, std::string correct, int maxsize);
+		Genetic (int pop_size, int chance, std::string correct, int minsize);
 
-		int evaluate (dataIndex_t genotype);
+		int evaluate (const std::string &genotype);
 		static void recombine (std::string &genotype_a, std::string &genotype_b);
 		void mutate (dataIndex_t i);
 		dataIndex_t rand_genome (void);

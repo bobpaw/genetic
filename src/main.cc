@@ -41,7 +41,7 @@ int main (int argc, char * argv[]) {
 		hello.statistics();
 		mvwprintw(board, 0, 0, "Generation %lu\n[\n", hello.generations());
 		for (int i = 0; i < hello.pop_size(); ++i) {
-			if (getcurx(board) + hello.maxsize() + 4 > COLS) waddch(board, '\n');
+			if (getcurx(board) + hello.genome(i).size() + 4 > COLS) waddch(board, '\n');
 			if (hello.genome_fitness(i) == hello.max()) {
 				wattron(board, COLOR_PAIR(1));
 				wprintw(board, "\"%s\"", hello.genome(i).c_str());
