@@ -3273,6 +3273,7 @@ $as_echo "#define HAVE_CXX14 1" >>confdefs.h
   fi
 
 
+if  $HAVE_CXX14 -eq 0 ; then
   ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -3631,6 +3632,7 @@ $as_echo "#define HAVE_CXX11 1" >>confdefs.h
   fi
 
 
+fi
 
 # Checks for libraries.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lncurses" >&5
