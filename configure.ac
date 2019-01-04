@@ -11,7 +11,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
-AX_CXX_COMPILE_STDCXX([14])
+AX_CXX_COMPILE_STDCXX([14], [noext], [optional])
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 
 # Checks for libraries.
 AC_CHECK_LIB([ncurses], [initscr])
