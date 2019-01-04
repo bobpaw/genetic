@@ -73,7 +73,8 @@ namespace gen_alg {
 		return ret;
 	}
 
-	static inline auto abs (const auto &x) { return x < 0 ? -1 * x : x; }
+	template <typename T>
+	static constexpr T abs (const T &x) { return x < 0 ? x * -1 : x; }
 
 	// Calculate and update stats
 	void Genetic::statistics (void) {
