@@ -15,7 +15,7 @@
 std::cerr << "ncurses error(" #func "):" msg << std::endl; return -1; } while (0)
 
 int main (int argc, char * argv[]) {
-	gen_alg::Genetic hello(20, 3, "hello world");
+	gen_alg::GeneticString hello(20, 3, "hello world");
 	std::string chance_str(4, ' ');
 	char c_chance_str[4] = "";
 	std::string pop_str;

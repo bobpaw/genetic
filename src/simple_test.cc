@@ -3,8 +3,8 @@
 #include "gen_alg.h"
 
 int main (int argc, char * argv[]) {
-	gen_alg::Genetic hi(20, 23, "hello worlds");
-	while (hi.generations() < 30000)
+	gen_alg::GeneticString hi(20, 23, "hello world");
+	while (hi.generations() < 30000 && !hi.one())
 		++hi;
 	std::cout << "Generation " << hi.generations() << std::endl;
 	std::cout << "[";

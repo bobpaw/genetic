@@ -3,7 +3,7 @@
 #include "gen_alg.h"
 
 int main (int argc, char * argv[]) {
-	auto p_genome = [] (const gen_alg::Genetic &x) {
+	auto p_genome = [] (const gen_alg::GeneticString &x) {
 		std::cout << "Generation " << x.generations() << std::endl;
 		std::cout << "[";
 		for (int i = 0; i < x.pop_size(); i++) {
@@ -20,7 +20,7 @@ int main (int argc, char * argv[]) {
 		std::cout << "Mean Average Deveation eval: " <<  x.mad() << std::endl;
 	};
 
-	gen_alg::Genetic hi(20, 23, "hello worlds");
+	gen_alg::GeneticString hi(20, 23, "hello worlds");
 	while (hi.generations() < 1500)
 		++hi;
 	p_genome(hi);
