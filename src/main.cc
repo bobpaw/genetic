@@ -7,6 +7,10 @@
 	for (int _i = getcurx(win); _i < COLS; _i++) waddch(win, ' ');
 #endif
 
+#ifndef CTRL
+#define CTRL(ch) ((ch) & 037)
+#endif
+
 #define NCURSES_ERROR(func, msg) do {if (!isendwin()) { curs_set(1); clear(); endwin(); delwin(stdscr); } \
 std::cerr << "ncurses error(" #func "):" msg << std::endl; return -1; } while (0)
 
@@ -34,7 +38,7 @@ int main (int argc, char * argv[]) {
 	wtimeout(board, -1);
 	int ch = 0;
 	bool playing = false;
-	while (ch != 'q') {
+	while (ch != 'q' && ch != CTRL('c')) {
 		werase(board);
 		werase(entry);
 		werase(stat_bar);
@@ -55,7 +59,7 @@ int main (int argc, char * argv[]) {
 		wprintw(board, "Average evaluation: %.2f\n", hello.avg());
 		wprintw(board, "Mean Average Deveation eval: %.2f\n", hello.mad());
 		if (hello.one()) wprintw(board, "Wow, one is correct!");
-		stat_bar_print(stat_bar, "m - set mutate chance    S - set correct string    p - set population size");
+		stat_bar_print(stat_bar, "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen");
 		wnoutrefresh(board);
 		wnoutrefresh(entry);
 		wnoutrefresh(stat_bar);
@@ -100,6 +104,16 @@ int main (int argc, char * argv[]) {
 				noecho();
 				curs_set(0);
 				werase(entry);
+				break;
+			case CTRL('L'): // Which has the same four LSBs as CTRL('l')
+				clearok(board, TRUE);
+				clearok(entry, TRUE);
+				clearok(stat_bar, TRUE);
+				break;
+			case CTRL('z'):
+				endwin();
+				std::raise(SIGSTOP);
+				doupdate();
 				break;
 			}
 		}

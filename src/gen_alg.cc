@@ -49,8 +49,8 @@ namespace gen_alg {
 
 	int Genetic::evaluate (const std::string &genotype) {
 		int sum = 1;
-		for (decltype(correct_.size()) i = 0; i < genotype.size(); ++i)
-			if (genotype[i] == correct_[i]) ++sum;
+		for (decltype(correct_.size()) i = 0; i < correct_.size(); ++i)
+			if (alphabet.find(correct_[i]) != std::string::npos && correct_[i] == genotype[i]) ++sum;
 		return sum;
 	}
 
