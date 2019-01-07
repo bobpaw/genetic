@@ -36,7 +36,7 @@ int main (int argc, char * argv[]) {
 	WINDOW * entry = newwin(1, 0, LINES - 1, 0);
 	wstandout(stat_bar);
 	wtimeout(board, -1);
-	int ch = 0;
+	int ch = 0, timeout_val = 5;
 	bool playing = false;
 	while (ch != 'q' && ch != CTRL('c')) {
 		werase(board);
@@ -59,7 +59,7 @@ int main (int argc, char * argv[]) {
 		wprintw(board, "Average evaluation: %.2f\n", hello.avg());
 		wprintw(board, "Mean Average Deveation eval: %.2f\n", hello.mad());
 		if (hello.one()) wprintw(board, "Wow, one is correct!");
-		stat_bar_print(stat_bar, "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen");
+		stat_bar_print(stat_bar, "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen    , . - Delay time (%d)", timeout_val);
 		wnoutrefresh(board);
 		wnoutrefresh(entry);
 		wnoutrefresh(stat_bar);
@@ -78,7 +78,7 @@ int main (int argc, char * argv[]) {
 			switch (ch) {
 			case ' ':
 				playing = true;
-				wtimeout(board, 10);
+				wtimeout(board, timeout_val * 10);
 				break;
 			case 'm':
 				stat_bar_print(stat_bar, "Mutate chance - currently: %d", hello.chance());
@@ -87,10 +87,18 @@ int main (int argc, char * argv[]) {
 				echo();
 				mvwgetnstr(entry, 0, 0, c_chance_str, 3);
 				chance_str.assign(c_chance_str);
-				if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) hello.chance() = std::stoi(chance_str);
-				noecho();
-				curs_set(0);
-				werase(entry);
+				try {
+					if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) hello.chance() = std::stoi(chance_str);
+					noecho();
+					curs_set(0);
+					werase(entry);
+				} catch (const std::invalid_argument &e) {
+					noecho();
+					curs_set(0);
+					werase(entry);
+					waddstr(entry, "Invalid argument");
+					wrefresh(entry);
+				}
 				break;
 			case 'p':
 				stat_bar_print(stat_bar, "Population size - currently: %d", hello.pop_size());
@@ -105,17 +113,29 @@ int main (int argc, char * argv[]) {
 				curs_set(0);
 				werase(entry);
 				break;
-			case CTRL('L'): // Which has the same four LSBs as CTRL('l')
-				clearok(board, TRUE);
-				clearok(entry, TRUE);
-				clearok(stat_bar, TRUE);
-				break;
 			case CTRL('z'):
 				endwin();
 				std::raise(SIGSTOP);
 				doupdate();
 				break;
 			}
+		}
+
+		// Things that can change regardless of state
+		switch (ch) {
+		case ',':
+		case '<':
+			if (timeout_val > 0) --timeout_val;
+			break;
+		case '.':
+		case '>':
+			if (timeout_val < 40) ++timeout_val;
+			break;
+		case CTRL('L'): // Which has the same four LSBs as CTRL('l')
+			clearok(board, TRUE);
+			clearok(entry, TRUE);
+			clearok(stat_bar, TRUE);
+			break;
 		}
 		ch = wgetch(board);
 	}
