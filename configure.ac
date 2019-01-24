@@ -17,8 +17,7 @@ AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 fi
 
 # Checks for libraries.
-AC_CHECK_LIB([ncurses], [initscr])
-# AC_CHECK_LIB([m], [fabs])
+AX_WITH_CURSES
 
 # Checks for header files.
 AC_CHECK_HEADERS([iostream string numeric algorithm utility vector random functional cstdlib])
