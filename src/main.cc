@@ -164,7 +164,7 @@ int main (int argc, char * argv[]) {
 	delwin(stdscr);
 	delwin(curscr);
 	delwin(newscr);
-	del_curterm(cur_term);
+	//del_curterm(cur_term);
 	board = stat_bar = entry = nullptr;
 	return 0;
 }
