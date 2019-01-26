@@ -2,9 +2,9 @@
 
 #ifndef stat_bar_print
 // Print text to status bar in the nice way, without erasing or refreshing
-#define stat_bar_print(win,...)																		\
-	mvwprintw(win, 0, 0, __VA_ARGS__);																		 \
-	for (int _i = getcurx(win); _i < COLS; _i++) waddch(win, ' ');
+#define stat_bar_print(win,...) \
+	mvwprintw(win, 0, 0, __VA_ARGS__); \
+	wchgat(win, -1, A_STANDOUT, COLOR_PAIR(0), NULL);
 #endif
 
 #ifndef CTRL
@@ -21,6 +21,8 @@ int main (int argc, char * argv[]) {
 	std::string pop_str;
 	char c_pop_str[32] = "";
 
+	const char stat_string[] = "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen    , . - Delay time (%d)";
+
 	initscr();
 	if (!has_colors()) {
 		std::cerr << "Colors aren't enabled, so highlighting won't work." << std::endl;
@@ -32,10 +34,12 @@ int main (int argc, char * argv[]) {
 	curs_set(0);
 	noecho();
 	WINDOW * board = newwin(LINES - 2, 0, 0, 0);
-	WINDOW * stat_bar = newwin(1, 0, LINES - 2, 0);
+	const int stat_string_len = sizeof(stat_string)/sizeof(stat_string[0]);
+	int stat_bar_height = stat_string_len / COLS + (stat_string_len % COLS == 0 ? 0: 1);
+	WINDOW * stat_bar = newwin(stat_bar_height, 0, LINES - stat_bar_height - 1, 0);
 	WINDOW * entry = newwin(1, 0, LINES - 1, 0);
-	wstandout(stat_bar);
 	wtimeout(board, -1);
+	wstandout(stat_bar);
 	int ch = 0, timeout_val = 5;
 	bool playing = false;
 	while (ch != 'q' && ch != CTRL('c')) {
@@ -43,9 +47,9 @@ int main (int argc, char * argv[]) {
 		werase(entry);
 		werase(stat_bar);
 		hello.statistics();
-		mvwprintw(board, 0, 0, "Generation %lu\n[\n", hello.generations());
+		mvwprintw(board, 0, 0, "Generation %lu\n[", hello.generations());
 		for (int i = 0; i < hello.pop_size(); ++i) {
-			if (getcurx(board) + hello.genome(i).size() + 4 > COLS) waddch(board, '\n');
+			if (getcurx(board) + hello.genome(i).size() + 4 > getmaxx(board)) waddch(board, '\n');
 			if (hello.genome_fitness(i) == hello.max()) {
 				wattron(board, COLOR_PAIR(1));
 				wprintw(board, "\"%s\"", hello.genome(i).c_str());
@@ -59,7 +63,7 @@ int main (int argc, char * argv[]) {
 		wprintw(board, "Average evaluation: %.2f\n", hello.avg());
 		wprintw(board, "Mean Average Deveation eval: %.2f\n", hello.mad());
 		if (hello.one()) wprintw(board, "Wow, one is correct!");
-		stat_bar_print(stat_bar, "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen    , . - Delay time (%d)", timeout_val);
+		stat_bar_print(stat_bar, stat_string, timeout_val);
 		wnoutrefresh(board);
 		wnoutrefresh(entry);
 		wnoutrefresh(stat_bar);
@@ -81,6 +85,7 @@ int main (int argc, char * argv[]) {
 				wtimeout(board, timeout_val * 10);
 				break;
 			case 'm':
+				werase(stat_bar);
 				stat_bar_print(stat_bar, "Mutate chance - currently: %d", hello.chance());
 				wrefresh(stat_bar);
 				curs_set(1);
@@ -101,6 +106,7 @@ int main (int argc, char * argv[]) {
 				}
 				break;
 			case 'p':
+				werase(stat_bar);
 				stat_bar_print(stat_bar, "Population size - currently: %d", hello.pop_size());
 				wrefresh(stat_bar);
 				wmove(entry, 0, 0);
@@ -108,10 +114,18 @@ int main (int argc, char * argv[]) {
 				echo();
 				wgetnstr(entry, c_pop_str, 31);
 				pop_str.assign(c_pop_str);
-				if (std::stoi(pop_str) > 1) hello.setPop_size(std::stoi(pop_str));
-				noecho();
-				curs_set(0);
-				werase(entry);
+				try {
+					if (std::stoi(pop_str) > 1) hello.setPop_size(std::stoi(pop_str));
+					noecho();
+					curs_set(0);
+					werase(entry);
+				} catch (const std::invalid_argument &e) {
+					noecho();
+					curs_set(0);
+					werase(entry);
+					waddstr(entry, "Invalid argument");
+					wrefresh(entry);
+				}
 				break;
 			case CTRL('z'):
 				endwin();
@@ -126,10 +140,12 @@ int main (int argc, char * argv[]) {
 		case ',':
 		case '<':
 			if (timeout_val > 0) --timeout_val;
+			wtimeout(board, timeout_val * 10);
 			break;
 		case '.':
 		case '>':
 			if (timeout_val < 40) ++timeout_val;
+			wtimeout(board, timeout_val * 10);
 			break;
 		case CTRL('L'): // Which has the same four LSBs as CTRL('l')
 			clearok(board, TRUE);
@@ -139,11 +155,16 @@ int main (int argc, char * argv[]) {
 		}
 		ch = wgetch(board);
 	}
+	endwin();
 	delwin(stat_bar);
 	delwin(entry);
 	delwin(board);
+
+	// Stuff that prob doesn't work; try to free as much mem as possible
 	delwin(stdscr);
+	delwin(curscr);
+	delwin(newscr);
+	del_curterm(cur_term);
 	board = stat_bar = entry = nullptr;
-	endwin();
 	return 0;
 }
