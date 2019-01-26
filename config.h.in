@@ -30,6 +30,9 @@
 /* Define to 1 if you have the <functional> header file. */
 #undef HAVE_FUNCTIONAL
 
+/* Define to 1 if you have the `getopt' function. */
+#undef HAVE_GETOPT
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

@@ -15,7 +15,50 @@
 std::cerr << "ncurses error(" #func "):" msg << std::endl; return -1; } while (0)
 
 int main (int argc, char * argv[]) {
-	gen_alg::GeneticString hello(20, 3, "hello world");
+	int c = 0, pop = 20, mutate = 3;
+	std::string str = "hello world";
+#ifdef HAVE_GETOPT
+	char *endptr = nullptr;
+	const char usage_string[] = " [-Vhu] [-p INT] [-m INT] [correct string]";
+	const char help_string[] = "-p INT\tSet population size\n-m INT\t Set mutate chance in range [0, 100]\n-h\tDisplay this help text\n-u\tDisplay usage string\n-V\tDisplay version info and bug contact\nIf not specified, correct string defaults to 'hello world'";
+	getopt_uni::opterr = 0;
+	while ( (c = getopt_uni::getopt(argc, argv, "Vhup:m:")) != -1) {
+		switch (c) {
+		case 'V':
+			std::cout << PACKAGE_STRING << std::endl;
+			std::cout << "Please contact " PACKAGE_BUGREPORT " for bug reports." << std::endl;
+			return 0;
+		case 'h':
+			std::cout << PACKAGE_STRING << std::endl;
+			std::cout << "Usage: " << argv[0] << usage_string << "\n\n" << help_string << std::endl;
+			return 0;
+		case 'p':
+			errno = 0;
+			pop = std::strtol(getopt_uni::optarg, &endptr, 0);
+			if (errno != 0 || endptr == getopt_uni::optarg) pop = 20; // Silently ignore error and set to default
+			break;
+		case 'm':
+			errno = 0;
+			mutate = std::strtol(getopt_uni::optarg, &endptr, 0);
+			if (errno != 0 || endptr == getopt_uni::optarg) mutate = 3; // Silently ignore and default
+			break;
+		case 'u':
+			std::cout << "Usage: " << argv[0] << usage_string << std::endl;
+			return 0;
+		case '?':
+			if (std::isprint(getopt_uni::optopt))
+				std::cerr << "Invalid option - '" << (char) getopt_uni::optopt << "'.\n";
+			else
+				std::cerr << "Invalid option - " << std::hex << std::showbase << getopt_uni::optopt << ".\n";
+		default:
+			std::cerr << "Usage: " << argv[0] << usage_string << std::endl;
+			return -1;
+		}
+	}
+	if (getopt_uni::optind < argc)
+		str.assign(argv[getopt_uni::optind]);
+#endif
+	gen_alg::GeneticString hello(pop, mutate, str);
 	std::string chance_str(4, ' ');
 	char c_chance_str[4] = "";
 	std::string pop_str;
