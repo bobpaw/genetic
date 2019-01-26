@@ -5,7 +5,7 @@
 #endif
 
 namespace gen_alg {
-	const std::string alphabet = "abcdegfhijklmnopqrstuvwxyz ";
+	const std::string alphabet = "abcdefghijklmnopqrstuvwxyz ";
 	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
