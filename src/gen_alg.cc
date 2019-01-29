@@ -14,23 +14,24 @@ namespace gen_alg {
 	#endif
 
 	GeneticString::GeneticString (int pop_size, int chance, std::string correct, int minsize):
-		correct_(correct), minsize_(minsize), one_(false), basic_genetic(pop_size, chance, minsize, alphabet)
+		correct_(correct), one_(false), basic_genetic(pop_size, chance, minsize, alphabet)
 	{
 		max_eval = evaluate(correct_);
 	}
 
 	basic_genetic::basic_genetic (int pop_size, int chance, int str_size, const std::string &pool):
 	basic_genetic(pop_size, chance) {
+		str_size_ = str_size;
 		for (auto &i : data_) {
 			i.resize(str_size);
 			for (auto &c : i) c = pool[random() % pool.size()];
 		}
 	}
 
-	void GeneticString::setPop_size (int size) {
+	void basic_genetic::setPop_size (int size) {
 		data_.reserve(size);
 		for (dataIndex_t i = population_; i < size; ++i) {
-			data_.emplace_back(minsize_, ' ');
+			data_.emplace_back(str_size_, ' ');
 			for (auto &c : data_.back()) c = alphabet[random() % alphabet.size()];
 		}
 		fitness.resize(size);
@@ -135,5 +136,16 @@ namespace gen_alg {
 			mutate(i);
 		}
 		return ++gen_idx;
+	}
+
+	void GeneticString::setCorrect (std::string arg) {
+		correct_ = std::move(arg);
+		max_eval = evaluate(correct_);
+		for (auto &i : data_) {
+			i.resize(correct_.size());
+			for (int c = str_size_; c < i.size(); ++c)
+				i[c] = alphabet[random() % alphabet.size()];
+		}
+		str_size_ = correct_.size();
 	}
 } // namespace gen_alg

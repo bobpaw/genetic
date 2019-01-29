@@ -20,6 +20,7 @@ namespace gen_alg {
 		std::vector<std::string> mid_gen;
 		std::vector<int> fitness;
 		int chance_{0};
+		int str_size_{0};
 		int population_{0};
 		unsigned long gen_idx{0};
 
@@ -50,12 +51,16 @@ namespace gen_alg {
 		auto genome_fitness (fitnessIndex_t i) const { return fitness[i]; }
 		auto genome (dataIndex_t i) const { return data_[i]; }
 		auto pop_size (void) const noexcept { return population_; }
+		auto str_size (void) const noexcept { return str_size_; }
 		auto chance (void) const noexcept { return chance_; }
 		auto &chance (void) noexcept { return chance_; }
 		auto max (void) const noexcept { return max_; }
 		auto sum (void) const noexcept { return sum_; }
 		auto avg (void) const noexcept { return avg_; }
 		auto mad (void) const noexcept { return mad_; }
+
+		// Special Setters
+		void setPop_size (int size);
 
 		virtual void statistics (void);
 		decltype(gen_idx) operator++ (void);
@@ -70,7 +75,6 @@ namespace gen_alg {
 	class GeneticString : public basic_genetic {
 	private:
 		std::string correct_;
-		int minsize_{0};
 		int max_eval{0};
 		bool one_{false};
 
@@ -81,10 +85,9 @@ namespace gen_alg {
 	public:
 		// Getters and Normal (ref) Setters
 		auto one (void) const noexcept { return one_; }
-		auto minsize (void) const noexcept { return minsize_; }
 
-		// Special Setters
-		void setPop_size (int size);
+		// Setters
+		void setCorrect (std::string arg);
 
 		// Constructors
 		GeneticString (int population_size, int chance, std::string correct) : GeneticString(population_size, chance, correct, correct.size()) {}
