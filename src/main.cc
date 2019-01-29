@@ -17,12 +17,14 @@ std::cerr << "ncurses error(" #func "):" msg << std::endl; return -1; } while (0
 int main (int argc, char * argv[]) {
 	int c = 0, pop = 20, mutate = 3;
 	std::string str = "hello world";
+	bool quit_fast = false, playing = false, quiet = false;
+	int ch = 0, timeout_val = 5;
 #ifdef HAVE_GETOPT
 	char *endptr = nullptr;
-	const char usage_string[] = " [-Vhu] [-p INT] [-m INT] [correct string]";
-	const char help_string[] = "-p INT\tSet population size\n-m INT\t Set mutate chance in range [0, 100]\n-h\tDisplay this help text\n-u\tDisplay usage string\n-V\tDisplay version info and bug contact\nIf not specified, correct string defaults to 'hello world'";
+	const char usage_string[] = " [-VhuQqs] [-p INT] [-m INT] [-d INT] [correct string]";
+	const char help_string[] = "-p INT\tPopulation size\n-m INT\t Mutation chance in range [0, 100]\n-Q\tQuit immediately on correct string\n-s\tStart immediately\n-d INT\tInitial delay amount in the range [0, 40]\n-q\tRun without graphics and print out generations number\n-h\tDisplay this help text\n-u\tDisplay usage string\n-V\tDisplay version info and bug contact\nIf not specified, correct string defaults to 'hello world'";
 	getopt_uni::opterr = 0;
-	while ( (c = getopt_uni::getopt(argc, argv, "Vhup:m:")) != -1) {
+	while ( (c = getopt_uni::getopt(argc, argv, "VhusqQp:m:d:")) != -1) {
 		switch (c) {
 		case 'V':
 			std::cout << PACKAGE_STRING << std::endl;
@@ -32,6 +34,15 @@ int main (int argc, char * argv[]) {
 			std::cout << PACKAGE_STRING << std::endl;
 			std::cout << "Usage: " << argv[0] << usage_string << "\n\n" << help_string << std::endl;
 			return 0;
+		case 'Q':
+			quit_fast = true;
+			break;
+		case 's':
+			playing = true;
+			break;
+		case 'q':
+			quiet = true;
+			break;
 		case 'p':
 			errno = 0;
 			pop = std::strtol(getopt_uni::optarg, &endptr, 0);
@@ -41,6 +52,11 @@ int main (int argc, char * argv[]) {
 			errno = 0;
 			mutate = std::strtol(getopt_uni::optarg, &endptr, 0);
 			if (errno != 0 || endptr == getopt_uni::optarg) mutate = 3; // Silently ignore and default
+			break;
+		case 'd':
+			errno = 0;
+			timeout_val = std::strtol(getopt_uni::optarg, &endptr, 0);
+			if (errno != 0 || endptr == getopt_uni::optarg) timeout_val = 5; // Silently ignore and default
 			break;
 		case 'u':
 			std::cout << "Usage: " << argv[0] << usage_string << std::endl;
@@ -59,13 +75,16 @@ int main (int argc, char * argv[]) {
 		str.assign(argv[getopt_uni::optind]);
 #endif
 	gen_alg::GeneticString hello(pop, mutate, str);
+	if (quiet) {
+		while (!hello.one()) ++hello;
+		std::cout << "Generation: " << hello.generations() << std::endl;
+		return 0;
+	}
 	std::string chance_str(4, ' ');
-	char c_chance_str[4] = "";
+	char entry_str[64] = "";
 	std::string pop_str;
-	char c_pop_str[32] = "";
 
 	const char stat_string[] = "m - set mutate chance    s - set correct string    p - set population size    ^L - redraw screen    , . - Delay time (%d)";
-
 	initscr();
 	if (!has_colors()) {
 		std::cerr << "Colors aren't enabled, so highlighting won't work." << std::endl;
@@ -83,9 +102,8 @@ int main (int argc, char * argv[]) {
 	WINDOW * entry = newwin(1, 0, LINES - 1, 0);
 	wtimeout(board, -1);
 	wstandout(stat_bar);
-	int ch = 0, timeout_val = 5;
-	bool playing = false;
-	while (ch != 'q' && ch != CTRL('c')) {
+	if (playing) wtimeout(board, timeout_val * 10);
+	while (ch != 'q' && ch != CTRL('c') && !(quit_fast && hello.one())) {
 		werase(board);
 		werase(entry);
 		werase(stat_bar);
@@ -113,6 +131,7 @@ int main (int argc, char * argv[]) {
 		doupdate();
 		if (hello.one()) {
 			playing = false;
+			if (quit_fast) break;
 			wtimeout(board, -1);
 		} else if (playing) {
 			if (ch == ' ') {
@@ -133,8 +152,8 @@ int main (int argc, char * argv[]) {
 				wrefresh(stat_bar);
 				curs_set(1);
 				echo();
-				mvwgetnstr(entry, 0, 0, c_chance_str, 3);
-				chance_str.assign(c_chance_str);
+				mvwgetnstr(entry, 0, 0, entry_str, 3);
+				chance_str.assign(entry_str);
 				try {
 					if (std::stoi(chance_str) >= 0 && std::stoi(chance_str) <= 100) hello.chance() = std::stoi(chance_str);
 					noecho();
@@ -155,8 +174,8 @@ int main (int argc, char * argv[]) {
 				wmove(entry, 0, 0);
 				curs_set(1);
 				echo();
-				wgetnstr(entry, c_pop_str, 31);
-				pop_str.assign(c_pop_str);
+				wgetnstr(entry, entry_str, 31);
+				pop_str.assign(entry_str);
 				try {
 					if (std::stoi(pop_str) > 1) hello.setPop_size(std::stoi(pop_str));
 					noecho();
@@ -169,6 +188,20 @@ int main (int argc, char * argv[]) {
 					waddstr(entry, "Invalid argument");
 					wrefresh(entry);
 				}
+				break;
+			case 's':
+				werase(stat_bar);
+				stat_bar_print(stat_bar, "Correct size - currently: %d", hello.pop_size());
+				wrefresh(stat_bar);
+				wmove(entry, 0, 0);
+				curs_set(1);
+				echo();
+				wgetnstr(entry, entry_str, 31);
+				str.assign(entry_str);
+				if (str.size() > 0) hello.setCorrect(std::string(entry_str));
+				noecho();
+				curs_set(0);
+				werase(entry);
 				break;
 			case CTRL('z'):
 				endwin();
