@@ -95,7 +95,7 @@ namespace gen_alg {
 	}
 
 	template <typename T>
-	static constexpr T abs (const T &x) { return x < 0 ? x * -1 : x; }
+	static constexpr T abs (const T &x) noexcept { return x < 0 ? x * -1 : x; }
 
 	// Calculate and update stats
 	void basic_genetic::statistics (void) {
