@@ -31,8 +31,8 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([getopt])
 
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
-AC_CONFIG_FILES([test/simple.sh], [chmod +x test/simple.sh])
-AC_CONFIG_FILES([test/rand_range.sh], [chmod +x test/rand_range.sh])
-AC_CONFIG_FILES([test/expand.sh], [chmod +x test/expand.sh])
+
+m4_foreach_w([_script], [test/simple.sh test/rand_range.sh test/expand.sh test/sanity], [AC_CONFIG_FILES(_script, chmod +x _script)])
+
 AM_INIT_AUTOMAKE
 AC_OUTPUT
