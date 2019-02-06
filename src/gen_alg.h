@@ -41,7 +41,7 @@ namespace gen_alg {
 		// Stats
 		max_(0), sum_(0), avg_(0.0), mad_(0.0),
 		data_(pop_size),
-		mid_gen(pop_size),
+		mid_gen(pop_size + pop_size % 2),
 		fitness(pop_size) {};
 		basic_genetic (int pop_size, int chance, int str_size, const std::string &pool);
 
