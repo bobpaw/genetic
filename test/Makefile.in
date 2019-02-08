@@ -94,7 +94,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = simple.sh rand_range.sh expand.sh sanity
+CONFIG_CLEAN_FILES = simple.sh rand_range.sh expand.sh sanity \
+	each_mut.sh some_pops.sh
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -320,9 +321,10 @@ TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/expand.sh.in \
-	$(srcdir)/rand_range.sh.in $(srcdir)/sanity.in \
-	$(srcdir)/simple.sh.in $(top_srcdir)/test-driver
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/each_mut.sh.in \
+	$(srcdir)/expand.sh.in $(srcdir)/rand_range.sh.in \
+	$(srcdir)/sanity.in $(srcdir)/simple.sh.in \
+	$(srcdir)/some_pops.sh.in $(top_srcdir)/test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -419,7 +421,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-check_SCRIPTS = simple.sh expand.sh rand_range.sh sanity
+check_SCRIPTS = simple.sh expand.sh rand_range.sh sanity some_pops.sh each_mut.sh
 TESTS = $(check_SCRIPTS)
 CLEANFILES = $(check_SCRIPTS)
 all: all-am
@@ -462,6 +464,10 @@ rand_range.sh: $(top_builddir)/config.status $(srcdir)/rand_range.sh.in
 expand.sh: $(top_builddir)/config.status $(srcdir)/expand.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 sanity: $(top_builddir)/config.status $(srcdir)/sanity.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+each_mut.sh: $(top_builddir)/config.status $(srcdir)/each_mut.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+some_pops.sh: $(top_builddir)/config.status $(srcdir)/some_pops.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 tags TAGS:
 
@@ -635,6 +641,20 @@ rand_range.sh.log: rand_range.sh
 sanity.log: sanity
 	@p='sanity'; \
 	b='sanity'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+some_pops.sh.log: some_pops.sh
+	@p='some_pops.sh'; \
+	b='some_pops.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+each_mut.sh.log: each_mut.sh
+	@p='each_mut.sh'; \
+	b='each_mut.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
