@@ -32,9 +32,9 @@ AC_CHECK_FUNCS([getopt])
 
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 
-m4_foreach_w([_script],
-[test/simple.sh test/rand_range.sh test/expand.sh test/sanity test/each_mut.sh test/some_pops.sh],
-[AC_CONFIG_FILES(_script, chmod +x _script)])
+# m4_foreach_w([_script],
+# [test/simple.sh test/rand_range.sh test/expand.sh test/sanity test/each_mut.sh test/some_pops.sh],
+# [AC_CONFIG_FILES(_script, chmod +x _script)])
 
 AM_INIT_AUTOMAKE
 AC_OUTPUT

@@ -10,7 +10,7 @@ for p in $(seq 20 200); do
 		done
 		pids=""
 	fi
-	@top_srcdir@/src/genetic -qp $p 'evan is cool' &
+	../src/genetic -qp $p 'evan is cool' &
 	pids="$pids $!"
 done
 )

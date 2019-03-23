@@ -1,5 +1,5 @@
 bin_PROGRAMS = genetic
-noinst_HEADERS = gen_alg.h
+noinst_HEADERS = gen_alg.h fakerandom.h
 genetic_SOURCES = main.cc main.h gen_alg.cc
 genetic_LDADD = $(CURSES_LIBS)
 genetic_CXXFLAGS = $(CURSES_CFLAGS)
