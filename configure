@@ -5261,13 +5261,9 @@ done
 ac_config_files="$ac_config_files Makefile src/Makefile test/Makefile"
 
 
-ac_config_files="$ac_config_files test/simple.sh"
-ac_config_files="$ac_config_files test/rand_range.sh"
-ac_config_files="$ac_config_files test/expand.sh"
-ac_config_files="$ac_config_files test/sanity"
-ac_config_files="$ac_config_files test/each_mut.sh"
-ac_config_files="$ac_config_files test/some_pops.sh"
-
+# m4_foreach_w([_script],
+# [test/simple.sh test/rand_range.sh test/expand.sh test/sanity test/each_mut.sh test/some_pops.sh],
+# [AC_CONFIG_FILES(_script, chmod +x _script)])
 
 am__api_version='1.15'
 
@@ -6797,12 +6793,6 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
-    "test/simple.sh") CONFIG_FILES="$CONFIG_FILES test/simple.sh" ;;
-    "test/rand_range.sh") CONFIG_FILES="$CONFIG_FILES test/rand_range.sh" ;;
-    "test/expand.sh") CONFIG_FILES="$CONFIG_FILES test/expand.sh" ;;
-    "test/sanity") CONFIG_FILES="$CONFIG_FILES test/sanity" ;;
-    "test/each_mut.sh") CONFIG_FILES="$CONFIG_FILES test/each_mut.sh" ;;
-    "test/some_pops.sh") CONFIG_FILES="$CONFIG_FILES test/some_pops.sh" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -7399,12 +7389,6 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
-    "test/simple.sh":F) chmod +x test/simple.sh ;;
-    "test/rand_range.sh":F) chmod +x test/rand_range.sh ;;
-    "test/expand.sh":F) chmod +x test/expand.sh ;;
-    "test/sanity":F) chmod +x test/sanity ;;
-    "test/each_mut.sh":F) chmod +x test/each_mut.sh ;;
-    "test/some_pops.sh":F) chmod +x test/some_pops.sh ;;
     "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
   # Older Autoconf quotes --file arguments for eval, but not when files
   # are listed without --file.  Let's play safe and only enable the eval
