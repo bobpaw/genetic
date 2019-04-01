@@ -3366,7 +3366,7 @@ $as_echo "#define HAVE_CXX14 1" >>confdefs.h
   fi
 
 
-if  $HAVE_CXX14 -eq 0 ; then
+if test $HAVE_CXX14 -eq 0; then
   ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'

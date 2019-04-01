@@ -12,7 +12,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 AX_CXX_COMPILE_STDCXX([14], [noext], [optional])
-if [ $HAVE_CXX14 -eq 0 ]; then
+if test $HAVE_CXX14 -eq 0; then
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 fi
 
