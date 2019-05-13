@@ -28,4 +28,4 @@ addons:
 # Actually check if it works
 script:
   - autoreconf -f && ./configure && make && make check
-  - if [ -x "src/simple_test" ]; then make clean; make check CXXFLAGS=-DVALGRIND_DEBUG; valgrind --leak-check=full --show-leak-kinds=all src/simple_test; fi
+  - if [ -x "src/simple_test" ]; then make clean; cd src; make CXXFLAGS=-DVALGRIND_DEBUG simple_test; valgrind --leak-check=full --show-leak-kinds=all ./simple_test; fi

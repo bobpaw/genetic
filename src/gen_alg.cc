@@ -5,7 +5,7 @@
 #endif
 
 namespace gen_alg {
-	const std::string alphabet = "abcdegfhijklmnopqrstuvwxyz";
+	const std::string alphabet = "abcdefghijklmnopqrstuvwxyz ";
 	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
@@ -13,30 +13,25 @@ namespace gen_alg {
 		return distribution(engine); };
 	#endif
 
-	Genetic::Genetic (int pop_size, int chance, std::string correct, int minsize) :
-		population_(pop_size),
-		chance_(chance),
-		correct_(correct),
-		minsize_(minsize),
-		gen_idx(0),
-		// Stats
-		one_(false), max_(0), sum_(0), avg_(0.0), mad_(0.0),
-		// Vectors
-		data_(pop_size, std::string(minsize, ' ')),
-		mid_gen(pop_size),
-		fitness(pop_size)
+	GeneticString::GeneticString (int pop_size, int chance, std::string correct, int minsize):
+		correct_(correct), one_(false), basic_genetic(pop_size, chance, minsize, alphabet)
 	{
 		max_eval = evaluate(correct_);
+	}
+
+	basic_genetic::basic_genetic (int pop_size, int chance, int str_size, const std::string &pool):
+	basic_genetic(pop_size, chance) {
+		str_size_ = str_size;
 		for (auto &i : data_) {
-			i.reserve(minsize_);
-			for (auto &c : i) c = alphabet[random() % alphabet.size()];
+			i.resize(str_size);
+			for (auto &c : i) c = pool[random() % pool.size()];
 		}
 	}
 
-	Genetic &Genetic::setPop_size (int size) {
+	void basic_genetic::setPop_size (int size) {
 		data_.reserve(size);
-		for (Genetic::dataIndex_t i = population_; i < size; ++i) {
-			data_.emplace_back(minsize_, ' ');
+		for (dataIndex_t i = population_; i < size; ++i) {
+			data_.emplace_back(str_size_, ' ');
 			for (auto &c : data_.back()) c = alphabet[random() % alphabet.size()];
 		}
 		fitness.resize(size);
@@ -44,27 +39,34 @@ namespace gen_alg {
 		// mid_gen needs to be size divisible by 2
 		mid_gen.resize(size + (size % 2 == 0 ? 0 : 1));
 		population_ = size;
-		return *this;
 	}
 
-	int Genetic::evaluate (const std::string &genotype) {
-		int sum = 1;
-		for (decltype(correct_.size()) i = 0; i < genotype.size(); ++i)
-			if (genotype[i] == correct_[i]) ++sum;
-		return sum;
+	int GeneticString::evaluate (const std::string &genotype) {
+		int sum = 0;
+		for (decltype(correct_.size()) i = 0; i < correct_.size(); ++i)
+			if (alphabet.find(correct_[i]) != std::string::npos && correct_[i] == genotype[i]) ++sum;
+		return sum * sum;
 	}
 
-	void Genetic::recombine (std::string &genotype_a, std::string &genotype_b) {
+	void GeneticString::recombine (std::string &genotype_a, std::string &genotype_b) {
 		int length = std::min(genotype_a.size(), genotype_b.size());
-		auto ret = std::make_pair(std::string(), std::string());
-		int split = random() % length;
-		ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
-		ret.second = genotype_a.substr(0, split) + genotype_b.substr(split);
-		genotype_a = ret.first;
-		genotype_b = ret.second;
+		if (length == 0) {
+			if (length == genotype_a.size()) {
+				genotype_a = genotype_b; // Both are now b
+			} else {
+				genotype_b = genotype_a; // Both are now a
+			}
+		} else {
+			auto ret = std::make_pair(std::string(), std::string());
+			int split = random() % length;
+			ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
+			ret.second = genotype_a.substr(0, split) + genotype_b.substr(split);
+			genotype_a = ret.first;
+			genotype_b = ret.second;
+		}
 	}
 
-	void Genetic::mutate (dataIndex_t i) {
+	void GeneticString::mutate (dataIndex_t i) {
 		if (data_[i].size() < correct_.size()) {
 			switch (random() % 2) {
 			case 0:
@@ -80,19 +82,36 @@ namespace gen_alg {
 		}
 	}
 
-	Genetic::dataIndex_t Genetic::rand_genome (void) {
-		int number = random() % sum_;
-		dataIndex_t ret = 0;
-		for (; ret < population_ != number < fitness[ret]; ++ret)
-			number -= fitness[ret];
+	basic_genetic::fitnessIndex_t basic_genetic::rand_genome (void) {
+		fitnessIndex_t ret = 0;
+		if (sum_ == 0) {
+			ret = random() % fitness.size();
+		} else {
+			int number = random() % sum_;
+			for (; ret < population_ != number < fitness[ret]; ++ret)
+				number -= fitness[ret];
+		}
 		return ret;
 	}
 
 	template <typename T>
-	static constexpr T abs (const T &x) { return x < 0 ? x * -1 : x; }
+	static constexpr T abs (const T &x) noexcept { return x < 0 ? x * -1 : x; }
 
 	// Calculate and update stats
-	void Genetic::statistics (void) {
+	void basic_genetic::statistics (void) {
+		for (dataIndex_t i = 0; i < population_; ++i) {
+			fitness[static_cast<fitnessIndex_t>(i)] = evaluate(data_[i]);
+		}
+		sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
+		max_ = *std::max_element(fitness.begin(), fitness.end());
+		auto avg = avg_ = sum_ / population_;
+		mad_ = std::accumulate(fitness.begin(), fitness.end(), 0.0, [avg](const auto &cursum, const auto &x){
+			return cursum + abs(x - avg);
+		});
+		mad_ /= population_;
+	}
+
+	void GeneticString::statistics (void) {
 		for (dataIndex_t i = 0; i < population_; ++i) {
 			fitness[static_cast<fitnessIndex_t>(i)] = evaluate(data_[i]);
 			if (fitness[static_cast<fitnessIndex_t>(i)] == max_eval) one_ = true;
@@ -106,7 +125,7 @@ namespace gen_alg {
 		mad_ /= population_;
 	}
 
-	Genetic &Genetic::operator++ (void) {
+	decltype(basic_genetic::gen_idx) basic_genetic::operator++ (void) {
 		statistics();
 		for (dataIndex_t i = 0; i < mid_gen.size(); ++i)
 			mid_gen[i] = data_[rand_genome()];
@@ -116,7 +135,17 @@ namespace gen_alg {
 			data_[i] = mid_gen[i];
 			mutate(i);
 		}
-		++gen_idx;
-		return *this;
+		return ++gen_idx;
+	}
+
+	void GeneticString::setCorrect (std::string arg) {
+		correct_ = std::move(arg);
+		max_eval = evaluate(correct_);
+		for (auto &i : data_) {
+			i.resize(correct_.size());
+			for (int c = str_size_; c < i.size(); ++c)
+				i[c] = alphabet[random() % alphabet.size()];
+		}
+		str_size_ = correct_.size();
 	}
 } // namespace gen_alg
