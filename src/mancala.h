@@ -2,8 +2,7 @@
 #include <vector>
 
 namespace mancala {
-class Board
-{
+class Board {
 	std::array<int, 14> board{0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4};
 	/*
 	 * player true
@@ -42,17 +41,17 @@ class Board
 
 			if (position_f == (player ? 0 : 7)) {
 				// Keep same player
-			} else
-				(board[position_f] == 1 && position_f % 7 != 0) {
-					// FIXME: Make more compact
-					if (player && position_f > 7) {
-						board[0] += board[14 - position_f];
-						board[14 - position_f] = 0;
-					} else if (!player && position_f < 7) {
-						board[7] += board[14 - position_f];
-						board[14 - position_f] = 0;
-					}
+				;
+			} else if (board[position_f] == 1 && position_f % 7 != 0) {
+				// FIXME: Make more compact
+				if (player && position_f > 7) {
+					board[0] += board[14 - position_f];
+					board[14 - position_f] = 0;
+				} else if (!player && position_f < 7) {
+					board[7] += board[14 - position_f];
+					board[14 - position_f] = 0;
 				}
+			}
 		} else {
 			// Play avalanche mancala
 
