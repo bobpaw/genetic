@@ -21,57 +21,53 @@ class Board {
 	bool player{false};
 	bool mode{false};  // false: capture true: avalanche
 
+private:
+	int move_pieces(int position) {
+		int initial_hand = board[position];
+		board[position] = 0;
+		for (int i = 0; i < initial_hand; ++i) {
+			if (position % 14 == (player ? 7 : 0))  // i.e. not their pocket
+				++position;
+
+			++position;
+			++board[position % 14];
+		}
+		return position % 14;
+	}
+
+public:
+	Board(bool p, bool m): player(p), mode(m) {}
+	Board(): Board(false, false) {}
+
+	const int& operator[](int n) const { return board[n]; }
+	int& operator[](int n) { return board[n]; }
+
 	const int& move(int position) {
-		// FIXME: Use multiple if (mode) throughout instead of one
 		if (mode) {
 			// Play capture mancala
 
-			int position_f = position;
-			int initial_hand = board[position];
-			board[position] = 0;
-			for (int i = 1; i < initial_hand; ++i) {
-				if (player && position + i == 7)
-					continue;
-				else if (!player && position + i == 0)
-					continue;
+			int position = move_pieces(position);
 
-				++position_f;
-				++board[position + i];
-			}
-
-			if (position_f == (player ? 0 : 7)) {
-				// Keep same player
-				;
-			} else if (board[position_f] == 1 && position_f % 7 != 0) {
-				// FIXME: Make more compact
-				if (player && position_f > 7) {
-					board[0] += board[14 - position_f];
-					board[14 - position_f] = 0;
-				} else if (!player && position_f < 7) {
-					board[7] += board[14 - position_f];
-					board[14 - position_f] = 0;
-				}
+			if (position == (player ? 0 : 7))
+				;  // Keep same player
+			else if (board[position] == 1 && player == position > 7) {
+				board[0] += board[14 - position];
+				board[14 - position] = 0;
+				player = !player;
 			}
 		} else {
 			// Play avalanche mancala
 
-			int position_f;
-			do {
-				position_f = position;
-				int initial_hand = board[position];
-				board[position] = 0;
-				for (int i = 1; i < initial_hand; ++i) {
-					if (player && position + i == 7)
-						continue;
-					else if (!player && position + i == 0)
-						continue;
+			while (true) {
+				position = move_pieces(position);
 
-					++position_f;
-					++board[position + i];
+				if (position == (player ? 0 : 7))
+					break;  // Same player
+				else if (board[position] == 1) {
+					player = !player;
+					break;
 				}
-
-				if (position_f == (player ? 0 : 7)) break;
-			} while (board[position_f] != 1);
+			}
 		}
 		return board[player ? 0 : 7];
 	}
