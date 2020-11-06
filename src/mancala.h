@@ -1,8 +1,13 @@
+#include <algorithm>
 #include <array>
+#include <iomanip>
+#include <iostream>
 #include <vector>
 
 namespace mancala {
-class Board {
+
+enum Mode : bool { Avalanche = false, Capture = true };
+struct Board {
 	std::array<int, 14> board{0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4};
 	/*
 	 * player true
@@ -36,7 +41,8 @@ private:
 	}
 
 public:
-	Board(bool p, bool m): player(p), mode(m) {}
+	Board(bool m, bool p): player(p), mode(m) {}
+	Board(bool m): Board(m, false) {}
 	Board(): Board(false, false) {}
 
 	const int& operator[](int n) const { return board[n]; }
@@ -46,14 +52,26 @@ public:
 		if (mode) {
 			// Play capture mancala
 
-			int position = move_pieces(position);
+			position = move_pieces(position);
 
 			if (position == (player ? 0 : 7))
-				;  // Keep same player
-			else if (board[position] == 1 && player == position > 7) {
-				board[0] += board[14 - position];
-				board[14 - position] = 0;
-				player = !player;
+				player = !player;  // Keep same player
+			else if (board[position] == 1 && player == (position > 7)) {
+				board[0] += board[14 - position] + 1;
+				board[14 - position] = board[position] = 0;
+			}
+			if (std::all_of(board.cbegin() + 8, board.cbegin() + 14,
+											[](int a) { a == 0; })) {
+				for (int i = 1; i < 7; ++i) {
+					board[7] += board[i];
+					board[i] = 0;
+				}
+			} else if (std::all_of(board.cbegin() + 1, board.cbegin() + 7,
+														 [](int a) { a == 0; })) {
+				for (int i = 8; i < 14; ++i) {
+					board[0] += board[i];
+					board[i] = 0;
+				}
 			}
 		} else {
 			// Play avalanche mancala
@@ -61,16 +79,27 @@ public:
 			while (true) {
 				position = move_pieces(position);
 
-				if (position == (player ? 0 : 7))
-					break;  // Same player
-				else if (board[position] == 1) {
-					player = !player;
+				if (position == (player ? 0 : 7)) {
+					player = !player;  // Same player
 					break;
-				}
+				} else if (board[position] == 1)
+					break;
 			}
 		}
+		player = !player;
 		return board[player ? 0 : 7];
 	}
 
+	friend std::ostream& operator<<(std::ostream&, const Board&);
+
 };  // class Board
+
+std::ostream& operator<<(std::ostream& out, const Board& b) {
+	out << "  " << std::setfill('0') << std::setw(2) << b[0] << std::endl;
+	for (int i = 1; i < 7; ++i)
+		out << std::setw(2) << b[i] << "  " << std::setw(2) << b[14 - i]
+				<< std::endl;
+	out << "  " << std::setw(2) << b[7] << std::endl;
+	return out;
+}
 }  // namespace mancala
