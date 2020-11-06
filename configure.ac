@@ -11,7 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
-AX_CXX_COMPILE_STDCXX([14], [noext], [optional])
+AX_CXX_COMPILE_STDCXX([14], [noext], [mandatory])
 if test $HAVE_CXX14 -eq 0; then
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 fi
