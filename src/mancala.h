@@ -25,16 +25,19 @@ struct Board {
 
 	bool player{false};
 	bool mode{false};  // false: capture true: avalanche
+	bool over() const {
+		return std::count(board.cbegin() + 1, board.cbegin() + 7, 0) == 6 ||
+				std::count(board.cbegin() + 8, board.cend(), 0) == 6;
+	}
 
-private:
-	int move_pieces(int position) {
+protected:
+	virtual int move_pieces(int position) {
 		int initial_hand = board[position];
 		board[position] = 0;
 		for (int i = 0; i < initial_hand; ++i) {
+			++position;
 			if (position % 14 == (player ? 7 : 0))  // i.e. not their pocket
 				++position;
-
-			++position;
 			++board[position % 14];
 		}
 		return position % 14;
@@ -49,6 +52,7 @@ public:
 	int& operator[](int n) { return board[n]; }
 
 	const int& move(int position) {
+		if (board[position] == 0) return board[player ? 0 : 7];
 		if (mode) {
 			// Play capture mancala
 
@@ -56,18 +60,19 @@ public:
 
 			if (position == (player ? 0 : 7))
 				player = !player;  // Keep same player
-			else if (board[position] == 1 && player == (position > 7)) {
-				board[0] += board[14 - position] + 1;
+			else if (board[position] == 1 && board[14 - position] != 0 &&
+							 player == (position > 7)) {
+				board[player ? 0 : 7] += board[14 - position] + 1;
 				board[14 - position] = board[position] = 0;
 			}
 			if (std::all_of(board.cbegin() + 8, board.cbegin() + 14,
-											[](int a) { a == 0; })) {
+											[](int a) { return a == 0; })) {
 				for (int i = 1; i < 7; ++i) {
 					board[7] += board[i];
 					board[i] = 0;
 				}
 			} else if (std::all_of(board.cbegin() + 1, board.cbegin() + 7,
-														 [](int a) { a == 0; })) {
+														 [](int a) { return a == 0; })) {
 				for (int i = 8; i < 14; ++i) {
 					board[0] += board[i];
 					board[i] = 0;
