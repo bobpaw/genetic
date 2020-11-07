@@ -5,6 +5,7 @@
 #cmakedefine PROJECT_VERSION_MINOR "@PROJECT_VERSION_MINOR@"
 
 #cmakedefine MATH_FOUND
+#cmakedefine HAVE_GETOPT
 
 #cmakedefine HAVE_NOEXCEPT
 

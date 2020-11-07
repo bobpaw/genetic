@@ -63,6 +63,8 @@ endif()
 # Add the binary directory to includes to be safe
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+check_include_file(getopt.h HAVE_GETOPT)
+
 #CURSES
 if (USE_PDCURSES)
 	message(STATUS "Using PDCurses")

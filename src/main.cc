@@ -43,12 +43,12 @@ int main(int argc, char* argv[]) {
 	while ((c = getopt_uni::getopt(argc, argv, "VhusqQp:m:d:")) != -1) {
 		switch (c) {
 		case 'V':
-			std::cout << PACKAGE_STRING << std::endl;
-			std::cout << "Please contact " PACKAGE_BUGREPORT " for bug reports."
+			std::cout << PROJECT_NAME " " PROJECT_VERSION << std::endl;
+			std::cout << "Please submit bug reports to github.com/bobpaw/genetic"
 								<< std::endl;
 			return 0;
 		case 'h':
-			std::cout << PACKAGE_STRING << std::endl;
+			std::cout << PROJECT_NAME " " PROJECT_VERSION << std::endl;
 			std::cout << "Usage: " << argv[0] << usage_string << "\n\n"
 								<< help_string << std::endl;
 			return 0;
@@ -89,6 +89,15 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	if (getopt_uni::optind < argc) str.assign(argv[getopt_uni::optind]);
+#else
+	for (int i = 1; i < argc; ++i) {
+		if (argv[i][0] == '-' && argv[i][1] == 'V') {
+			std::cout << PROJECT_NAME " " PROJECT_VERSION << std::endl;
+			std::cout << "Please submit bug reports to github.com/bobpaw/genetic"
+								<< std::endl;
+			return 0;
+		}
+	}
 #endif
 	gen_alg::GeneticString hello(pop, mutate, str);
 	if (quiet) {
