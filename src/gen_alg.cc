@@ -1,3 +1,9 @@
+#include <string>
+#include <random>
+#include <functional>
+#include <numeric> // std::accumulate
+#include <algorithm> // std::max_element
+
 #include "gen_alg.h"
 
 #ifdef VALGRIND_DEBUG

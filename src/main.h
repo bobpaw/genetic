@@ -12,7 +12,7 @@
 #include <term.h>
 
 #include "config.h"
-#include "gen_alg.h"
+#include "genetic_string.h"
 
 #ifdef HAVE_GETOPT
 namespace getopt_uni {

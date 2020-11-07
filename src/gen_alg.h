@@ -1,10 +1,5 @@
 #include <string>
 #include <vector>
-#include <random>
-#include <utility>
-#include <functional>
-#include <numeric>
-#include <algorithm>
 
 #ifndef GENETIC_GEN_ALG_H_
 #define GENETIC_GEN_ALG_H_

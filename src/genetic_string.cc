@@ -1,3 +1,6 @@
+#include <numeric> // std::accumulate
+#include <algorithm> // std::max_element
+
 #include "genetic_string.h"
 
 namespace gen_alg {
