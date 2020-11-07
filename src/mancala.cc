@@ -7,7 +7,7 @@
 #include "mancala.h"
 
 #ifndef CTRL
-#	define CTRL(ch) ((ch) &037)
+#define CTRL(ch) ((ch) &037)
 #endif
 
 #define NCURSES_ERROR(func, msg)                               \
@@ -117,11 +117,12 @@ int main() {
 			clear();
 			break;
 		}
-		
+
 		erase();
 		b.display(highlight);
 		printw("\nPlayer %d move?", b.player ? 2 : 1);
-    if (b.over()) mvprintw(8, 0, "Game over, player %d wins!", b[0] > b[7] ? 2 : 1);
+		if (b.over())
+			mvprintw(8, 0, "Game over, player %d wins!", b[0] > b[7] ? 2 : 1);
 
 		refresh();
 		ch = getch();

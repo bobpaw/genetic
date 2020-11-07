@@ -2,13 +2,13 @@
 
 #ifndef stat_bar_print
 // Print text to status bar in the nice way, without erasing or refreshing
-#	define stat_bar_print(win, ...)     \
-		mvwprintw(win, 0, 0, __VA_ARGS__); \
-		wchgat(win, -1, A_STANDOUT, COLOR_PAIR(0), NULL);
+#define stat_bar_print(win, ...)     \
+	mvwprintw(win, 0, 0, __VA_ARGS__); \
+	wchgat(win, -1, A_STANDOUT, COLOR_PAIR(0), NULL);
 #endif
 
 #ifndef CTRL
-#	define CTRL(ch) ((ch) &037)
+#define CTRL(ch) ((ch) &037)
 #endif
 
 #define NCURSES_ERROR(func, msg)                               \

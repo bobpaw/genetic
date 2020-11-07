@@ -27,7 +27,7 @@ struct Board {
 	bool mode{false};  // false: capture true: avalanche
 	bool over() const {
 		return std::count(board.cbegin() + 1, board.cbegin() + 7, 0) == 6 ||
-				std::count(board.cbegin() + 8, board.cend(), 0) == 6;
+					 std::count(board.cbegin() + 8, board.cend(), 0) == 6;
 	}
 
 protected:

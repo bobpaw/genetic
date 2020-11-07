@@ -32,4 +32,4 @@ public:
 };
 }  // namespace gen_alg
 
-#endif // GENETIC_GENETICSTRING_H_
+#endif  // GENETIC_GENETICSTRING_H_
