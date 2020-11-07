@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "gen_alg.h"
+#include "genetic_string.h"
 
 int main(int argc, char* argv[]) {
 	gen_alg::GeneticString hi(200, 23, "hello world");

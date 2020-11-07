@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "gen_alg.h"
+#include "genetic_string.h"
 
 int main(int argc, char* argv[]) {
 	auto p_genome = [](const gen_alg::GeneticString& x) {
