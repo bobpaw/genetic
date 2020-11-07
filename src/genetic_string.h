@@ -12,7 +12,6 @@ namespace gen_alg {
 		int evaluate (const std::string &genotype);
 		void recombine (std::string &genotype_a, std::string &genotype_b);
 		void mutate (dataIndex_t i);
-    char generate (int) const;
 
 	public:
 		// Getters and Normal (ref) Setters

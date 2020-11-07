@@ -14,6 +14,7 @@ namespace gen_alg {
 		std::vector<std::string> data_;
 		std::vector<std::string> mid_gen;
 		std::vector<int> fitness;
+		std::string pool;
 		int chance_{0};
 		int str_size_{0};
 		int population_{0};
@@ -37,8 +38,12 @@ namespace gen_alg {
 		max_(0), sum_(0), avg_(0.0), mad_(0.0),
 		data_(pop_size),
 		mid_gen(pop_size + pop_size % 2),
-		fitness(pop_size) {};
-		basic_genetic (int pop_size, int chance, int str_size);
+		fitness(pop_size), pool("") {};
+		basic_genetic (int pop_size, int chance, int str_size, std::string p);
+
+		virtual char generate (int r) const {
+			return pool[r % pool.size()];
+		}
 
 	public:
 		// Getters and Normal (ref) Setters
@@ -64,7 +69,6 @@ namespace gen_alg {
 		virtual int evaluate (const std::string &) = 0;
 		virtual void recombine (std::string &, std::string &) = 0;
 		virtual void mutate (dataIndex_t) = 0;
-		virtual char generate (int) const = 0; // generate a single character from the pool
 		fitnessIndex_t rand_genome (void);
 	};
 } // namespace gen_alg

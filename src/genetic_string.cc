@@ -8,7 +8,7 @@ const std::string alphabet = "abcdefghijklmnopqrstuvwxyz ";
 GeneticString::GeneticString(int pop_size, int chance, std::string correct,
 														 int minsize):
 		correct_(correct),
-		one_(false), basic_genetic(pop_size, chance, minsize) {
+		one_(false), basic_genetic(pop_size, chance, minsize, alphabet) {
 	max_eval = evaluate(correct_);
 }
 
@@ -46,19 +46,15 @@ void GeneticString::mutate(dataIndex_t i) {
 		case 0:
 			if (random() % 100 < chance_)
 				data_[i][random() % data_[i].size()] =
-						alphabet[random() % alphabet.size()];
+						generate(random());
 			break;
-		case 1: data_[i].append(1, alphabet[random() % alphabet.size()]);
+		case 1: data_[i].append(1, generate(random()));
 		}
 	} else {
 		if (random() % 100 < chance_)
 			data_[i][random() % data_[i].size()] =
-					alphabet[random() % alphabet.size()];
+					generate(random());
 	}
-}
-
-char GeneticString::generate (int r) const {
-  return alphabet[r % alphabet.size()];
 }
 
 void GeneticString::statistics(void) {
@@ -82,7 +78,7 @@ void GeneticString::setCorrect(std::string arg) {
 	for (auto& i : data_) {
 		i.resize(correct_.size());
 		for (int c = str_size_; c < i.size(); ++c)
-			i[c] = alphabet[random() % alphabet.size()];
+			i[c] = generate(random());
 	}
 	str_size_ = correct_.size();
 }

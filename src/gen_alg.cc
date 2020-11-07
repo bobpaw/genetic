@@ -19,12 +19,13 @@ namespace gen_alg {
 	static auto random () { return distribution(engine); }
 	#endif
 
-	basic_genetic::basic_genetic (int pop_size, int chance, int str_size):
+	basic_genetic::basic_genetic (int pop_size, int chance, int str_size, std::string p):
 	basic_genetic(pop_size, chance) {
+		pool = p;
 		str_size_ = str_size;
 		for (auto &i : data_) {
 			i.resize(str_size);
-			for (auto &c : i) c = generate(random());
+			for (auto &c : i) c = basic_genetic::generate(random());
 		}
 	}
 
