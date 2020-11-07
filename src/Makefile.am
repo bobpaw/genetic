@@ -1,6 +1,6 @@
 bin_PROGRAMS = genetic mancala
 noinst_HEADERS = gen_alg.h fakerandom.h
-genetic_SOURCES = main.cc main.h gen_alg.cc
+genetic_SOURCES = main.cc main.h gen_alg.cc genetic_string.cc
 genetic_LDADD = $(CURSES_LIBS)
 genetic_CXXFLAGS = $(CURSES_CFLAGS)
 check_PROGRAMS = simple_test random_inrange expand_test
