@@ -1,5 +1,5 @@
-#include <numeric> // std::accumulate
-#include <algorithm> // std::max_element
+#include <algorithm>  // std::max_element
+#include <numeric>    // std::accumulate
 
 #include "genetic_string.h"
 
@@ -45,15 +45,13 @@ void GeneticString::mutate(dataIndex_t i) {
 		switch (random() % 2) {
 		case 0:
 			if (random() % 100 < chance_)
-				data_[i][random() % data_[i].size()] =
-						generate(random());
+				data_[i][random() % data_[i].size()] = generate(random());
 			break;
 		case 1: data_[i].append(1, generate(random()));
 		}
 	} else {
 		if (random() % 100 < chance_)
-			data_[i][random() % data_[i].size()] =
-					generate(random());
+			data_[i][random() % data_[i].size()] = generate(random());
 	}
 }
 
@@ -77,8 +75,7 @@ void GeneticString::setCorrect(std::string arg) {
 	max_eval = evaluate(correct_);
 	for (auto& i : data_) {
 		i.resize(correct_.size());
-		for (int c = str_size_; c < i.size(); ++c)
-			i[c] = generate(random());
+		for (int c = str_size_; c < i.size(); ++c) i[c] = generate(random());
 	}
 	str_size_ = correct_.size();
 }
