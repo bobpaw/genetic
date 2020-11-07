@@ -22,5 +22,6 @@ src/genetic
 
 # Object files
 *.o
+*.a
 
 *~

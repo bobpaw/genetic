@@ -1,12 +1,13 @@
 include_directories(.)
-add_library(gen_alg OBJECT gen_alg.cc gen_alg.h)
+add_library(gen_alg STATIC gen_alg.cc gen_alg.h)
 # target_compile_features(obj1 PUBLIC cxx_auto_type $<IF:$<COMPILE_FEATURES:cxx_return_type_deduction>,cxx_return_type_deduction,cxx_trailing_return_types> cxx_noexcept cxx_nullptr cxx_decltype)
-add_library(genetic_string OBJECT genetic_string.cc genetic_string.h gen_alg)
+add_library(genetic_string STATIC genetic_string.cc genetic_string.h)
+target_link_libraries(genetic_string PUBLIC gen_alg)
 
-add_executable(genetic main.cc main.h genetic_string correct_curses.h #[[ FIXME: fakerandom.h when valgrind]])
+add_executable(genetic main.cc main.h correct_curses.h #[[ FIXME: fakerandom.h when valgrind]])
 target_include_directories(genetic PRIVATE "${CURSES_INCLUDE_DIRS}")
 target_compile_features(genetic PRIVATE cxx_lambdas cxx_decltype)
-target_link_libraries(genetic "${CURSES_LIBRARIES}")
+target_link_libraries(genetic genetic_string gen_alg "${CURSES_LIBRARIES}")
 
 add_executable(mancala mancala.cc mancala.h)
 target_include_directories(mancala PRIVATE "${CURSES_INCLUDE_DIRS}")
