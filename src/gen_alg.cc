@@ -9,8 +9,9 @@ namespace gen_alg {
 	#ifdef VALGRIND_DEBUG
 	auto random = fakerandom::rand_device(0, 100);
 	#else
-	auto random = [engine = std::default_random_engine(std::random_device()()), distribution = std::uniform_int_distribution<int>(0)] (void) mutable {
-		return distribution(engine); };
+	static auto engine = std::default_random_engine(std::random_device()());
+	static auto distribution = std::uniform_int_distribution<int>(0);
+	static auto random () { return distribution(engine); }
 	#endif
 
 	GeneticString::GeneticString (int pop_size, int chance, std::string correct, int minsize):
