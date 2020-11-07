@@ -8,6 +8,7 @@ autoscan.log
 .deps/
 config.log
 config.status
+configure
 Makefile
 config.h
 Makefile.in
