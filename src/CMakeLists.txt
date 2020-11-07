@@ -15,6 +15,8 @@ target_compile_features(mancala PRIVATE cxx_lambdas cxx_decltype)
 target_link_libraries(mancala "${CURSES_LIBRARIES}")
 
 # Tests
-add_executable(simple_test EXCLUDE_FROM_ALL simple_test.cc genetic_string)
+add_executable(simple_test EXCLUDE_FROM_ALL simple_test.cc)
+target_link_libraries(simple_test PRIVATE genetic_string)
 add_executable(random_inrange EXCLUDE_FROM_ALL random_inrange.cc fakerandom.h)
 add_executable(expand_test EXCLUDE_FROM_ALL expand_test.cc genetic_string)
+target_link_libraries(expand_test PRIVATE genetic_string)
