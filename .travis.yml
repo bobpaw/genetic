@@ -4,28 +4,95 @@ language: cpp
 git:
   depth: false
 
-dist: xenial
-
 # Test both clang and gcc
 compiler:
   - clang
   - gcc
 
+os:
+  - linux
+  - osx
+  - windows
+
+env:
+  - GENERATOR="Ninja"
+  - GENERATOR="Unix Makefiles"
+
 # Install requirements with apt
 addons:
   apt:
-    update: true
     packages:
-    - ncurses-base
-    - libncurses-dev
-    - valgrind
-    - automake
-    - autoconf
-    - perl
-    - m4
-    - autoconf-archive
+    - ncurses-dev
+    - cmake
+  homebrew:
+    packages:
+    - ncurses
+    - cmake
+    - ccache
+
+# Build Matrix
+matrix:
+  fast_finish: true
+  exclude:
+    - compiler: clang
+      env: GENERATOR="Ninja"
+    - os: windows
+      env: GENERATOR="Unix Makefiles"
+  allow_failures:
+    - os: windows
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+# " Fixes Visual Studio highlighting
+
+install:
+  - ./travis-windows-setup.sh
+
+before_script:
+  - cmake --version
+  - mkdir build && cd build
 
 # Actually check if it works
 script:
-  - autoreconf -f && ./configure && make && make check
-  - if [ -x "src/simple_test" ]; then make clean; cd src; make CXXFLAGS=-DVALGRIND_DEBUG simple_test; valgrind --leak-check=full --show-leak-kinds=all ./simple_test; fi
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
+  - cmake --build .
+  - ctest -j2 -VV
+#  - if [ -x "src/simple_test" ]; then make clean; cd src; make CXXFLAGS=-DVALGRIND_DEBUG simple_test; valgrind --leak-check=full --show-leak-kinds=all ./simple_test; fi
