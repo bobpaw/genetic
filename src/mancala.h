@@ -29,6 +29,9 @@ struct Board {
 		return std::count(board.cbegin() + 1, board.cbegin() + 7, 0) == 6 ||
 					 std::count(board.cbegin() + 8, board.cend(), 0) == 6;
 	}
+	void reset () {
+		board = {{0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4}};
+	}
 
 protected:
 	virtual int move_pieces(int position) {
