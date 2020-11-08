@@ -56,18 +56,10 @@ void GeneticString::mutate(dataIndex_t i) {
 }
 
 void GeneticString::statistics(void) {
-	for (dataIndex_t i = 0; i < population_; ++i) {
-		fitness[static_cast<fitnessIndex_t>(i)] = evaluate(data_[i]);
-		if (fitness[static_cast<fitnessIndex_t>(i)] == max_eval) one_ = true;
+	basic_genetic::statistics();
+	for (auto f : fitness) {
+		if (f == max_eval) one_ = true;
 	}
-	sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
-	max_ = *std::max_element(fitness.begin(), fitness.end());
-	auto avg = avg_ = sum_ / population_;
-	mad_ = std::accumulate(fitness.begin(), fitness.end(), 0.0,
-												 [avg](const auto& cursum, const auto& x) {
-													 return cursum + abs(x - avg);
-												 });
-	mad_ /= population_;
 }
 
 void GeneticString::setCorrect(std::string arg) {
