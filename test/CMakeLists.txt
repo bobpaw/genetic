@@ -7,7 +7,7 @@ add_test(
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
 			--build-target genetic
-			--test-command "$<TARGET_FILE:genetic> -V"
+			--test-command "$<TARGET_FILE:genetic>" -V
 )
 
 add_test(
@@ -56,7 +56,7 @@ add_test(
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
 			--build-target genetic
-			--test-command "$<TARGET_FILE:genetic> -m14 -p100 -q"
+			--test-command "$<TARGET_FILE:genetic>" -m14 -p100 -q
 )
 
 # FIXME: test each_mut, fixed by adding Catch2
