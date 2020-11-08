@@ -20,4 +20,8 @@ extern "C" int getopt(int argc, char* const argv[], const char* optstring);
 extern "C" char* optarg;
 extern "C" int optind, opterr, optopt;
 }  // namespace getopt_uni
+#else
+namespace getopt_uni {
+#include "getopt_rpc.h"
+}
 #endif

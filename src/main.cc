@@ -28,7 +28,6 @@ int main(int argc, char* argv[]) {
 	std::string str = "hello world";
 	bool quit_fast = false, playing = false, quiet = false;
 	int ch = 0, timeout_val = 5;
-#ifdef HAVE_GETOPT
 	char* endptr = nullptr;
 	const char usage_string[] =
 			" [-VhuQqs] [-p INT] [-m INT] [-d INT] [correct string]";
@@ -89,16 +88,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	if (getopt_uni::optind < argc) str.assign(argv[getopt_uni::optind]);
-#else
-	for (int i = 1; i < argc; ++i) {
-		if (argv[i][0] == '-' && argv[i][1] == 'V') {
-			std::cout << PROJECT_NAME " " PROJECT_VERSION << std::endl;
-			std::cout << "Please submit bug reports to github.com/bobpaw/genetic"
-								<< std::endl;
-			return 0;
-		}
-	}
-#endif
 	gen_alg::GeneticString hello(pop, mutate, str);
 	if (quiet) {
 		while (!hello.one()) ++hello;
