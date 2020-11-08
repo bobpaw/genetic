@@ -8,7 +8,7 @@ namespace mancala {
 
 enum Mode : bool { Avalanche = false, Capture = true };
 struct Board {
-	std::array<int, 14> board{0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4};
+	std::array<int, 14> board = {0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4};
 	/*
 	 * player true
 	 *  0
