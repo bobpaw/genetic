@@ -3,6 +3,7 @@ add_test(
 		sanity
 	COMMAND
 		"${CMAKE_CTEST_COMMAND}"
+			--output-on-failure
 			--build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}"
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
@@ -15,6 +16,7 @@ add_test(
 		SimpleTest
 	COMMAND
 		"${CMAKE_CTEST_COMMAND}"
+			--output-on-failure
 			--build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}"
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
@@ -27,6 +29,7 @@ add_test(
 		RandomInRange
 	COMMAND
 		"${CMAKE_CTEST_COMMAND}"
+			--output-on-failure
 			--build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}"
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
@@ -40,6 +43,7 @@ add_test(
 		ExpandTest
 	COMMAND
 		"${CMAKE_CTEST_COMMAND}"
+			--output-on-failure
 			--build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}"
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
@@ -52,6 +56,7 @@ add_test(
 		IntegratedGenetic
 	COMMAND
 		"${CMAKE_CTEST_COMMAND}"
+			--output-on-failure
 			--build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}"
 			--build-generator "${CMAKE_GENERATOR}"
 			--build-nocmake
