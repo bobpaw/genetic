@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 
+#ifndef GENETIC_MANCALA_H_
+#define GENETIC_MANCALA_H_
+
 namespace mancala {
 
 enum Mode : bool { Avalanche = false, Capture = true };
@@ -101,8 +104,9 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const Board&);
 
 };  // class Board
+}  // namespace mancala
 
-std::ostream& operator<<(std::ostream& out, const Board& b) {
+std::ostream& operator<<(std::ostream& out, const mancala::Board& b) {
 	out << "  " << std::setfill('0') << std::setw(2) << b[0] << std::endl;
 	for (int i = 1; i < 7; ++i)
 		out << std::setw(2) << b[i] << "  " << std::setw(2) << b[14 - i]
@@ -110,4 +114,5 @@ std::ostream& operator<<(std::ostream& out, const Board& b) {
 	out << "  " << std::setw(2) << b[7] << std::endl;
 	return out;
 }
-}  // namespace mancala
+
+#endif // GENETIC_MANCALA_H_

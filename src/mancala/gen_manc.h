@@ -8,7 +8,7 @@
 
 namespace gen_alg {
 class GeneticMancala: public basic_genetic {
-	static mancala::Board b;
+	mancala::Board b;
 
 private:
 	int evaluate(const std::string& genotype);
@@ -17,7 +17,7 @@ private:
 public:
 	GeneticMancala(int p, int ch): GeneticMancala(p, ch, 1) {}
 	GeneticMancala(int p, int ch, int m):
-			basic_genetic(p, ch, m, "123456") {}
+			basic_genetic(p, ch, m, "123456"), b(mancala::Avalanche, false) {}
 };
 }  // namespace gen_alg
 
