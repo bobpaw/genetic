@@ -17,10 +17,11 @@ stamp-h1
 build/
 
 # Executables
-src/mancala
+src/mancala/mancala
 src/genetic
 
 # Object files
 *.o
+*.a
 
 *~

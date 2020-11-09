@@ -25,7 +25,6 @@
 
 int main(int argc, char* argv[]) {
 	int c = 0, pop = 20, mutate = 3;
-	std::string str = "hello world";
 	bool quit_fast = false, playing = false, quiet = false;
 	int ch = 0, timeout_val = 5;
 	char* endptr = nullptr;
@@ -87,10 +86,9 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 	}
-	if (getopt_uni::optind < argc) str.assign(argv[getopt_uni::optind]);
-	gen_alg::GeneticString hello(pop, mutate, str);
+	gen_alg::GeneticMancala hello(pop, mutate);
 	if (quiet) {
-		while (!hello.one()) ++hello;
+		while (hello.max() < 48) ++hello;
 		std::cout << "Generation: " << hello.generations() << std::endl;
 		return 0;
 	}
@@ -99,8 +97,8 @@ int main(int argc, char* argv[]) {
 	std::string pop_str;
 
 	const char stat_string[] =
-			"m - set mutate chance    s - set correct string    p - set population "
-			"size    ^L - redraw screen    , . - Delay time (%d)";
+			"m - set mutate chance    p - set population size    ^L - redraw screen"
+			"    , . - Delay time (%d)";
 	initscr();
 	if (!has_colors()) {
 		std::cerr << "Colors aren't enabled, so highlighting won't work."
@@ -121,7 +119,7 @@ int main(int argc, char* argv[]) {
 	wtimeout(board, -1);
 	wstandout(stat_bar);
 	if (playing) wtimeout(board, timeout_val * 10);
-	while (ch != 'q' && ch != CTRL('c') && !(quit_fast && hello.one())) {
+	while (ch != 'q' && ch != CTRL('c') && !(quit_fast && hello.max() == 48)) {
 		werase(board);
 		werase(entry);
 		werase(stat_bar);
@@ -142,13 +140,13 @@ int main(int argc, char* argv[]) {
 		wprintw(board, "Max evaluation: %d\n", hello.max());
 		wprintw(board, "Average evaluation: %.2f\n", hello.avg());
 		wprintw(board, "Mean Average Deveation eval: %.2f\n", hello.mad());
-		if (hello.one()) wprintw(board, "Wow, one is correct!");
+		if (hello.max() == 48) wprintw(board, "Found a perfect move");
 		stat_bar_print(stat_bar, stat_string, timeout_val);
 		wnoutrefresh(board);
 		wnoutrefresh(entry);
 		wnoutrefresh(stat_bar);
 		doupdate();
-		if (hello.one()) {
+		if (hello.max() == 48) {
 			playing = false;
 			if (quit_fast) break;
 			wtimeout(board, -1);
@@ -210,21 +208,6 @@ int main(int argc, char* argv[]) {
 					waddstr(entry, "Invalid argument");
 					wrefresh(entry);
 				}
-				break;
-			case 's':
-				werase(stat_bar);
-				stat_bar_print(stat_bar, "Correct size - currently: %d",
-											 hello.pop_size());
-				wrefresh(stat_bar);
-				wmove(entry, 0, 0);
-				curs_set(1);
-				echo();
-				wgetnstr(entry, entry_str, 31);
-				str.assign(entry_str);
-				if (str.size() > 0) hello.setCorrect(std::string(entry_str));
-				noecho();
-				curs_set(0);
-				werase(entry);
 				break;
 			case CTRL('z'):
 				endwin();

@@ -21,25 +21,6 @@ int GeneticString::evaluate(const std::string& genotype) {
 	return sum * sum;
 }
 
-void GeneticString::recombine(std::string& genotype_a,
-															std::string& genotype_b) {
-	int length = std::min(genotype_a.size(), genotype_b.size());
-	if (length == 0) {
-		if (length == genotype_a.size()) {
-			genotype_a = genotype_b;  // Both are now b
-		} else {
-			genotype_b = genotype_a;  // Both are now a
-		}
-	} else {
-		auto ret = std::make_pair(std::string(), std::string());
-		int split = random() % length;
-		ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
-		ret.second = genotype_a.substr(0, split) + genotype_b.substr(split);
-		genotype_a = ret.first;
-		genotype_b = ret.second;
-	}
-}
-
 void GeneticString::mutate(dataIndex_t i) {
 	if (data_[i].size() < correct_.size()) {
 		switch (random() % 2) {
@@ -56,18 +37,10 @@ void GeneticString::mutate(dataIndex_t i) {
 }
 
 void GeneticString::statistics(void) {
-	for (dataIndex_t i = 0; i < population_; ++i) {
-		fitness[static_cast<fitnessIndex_t>(i)] = evaluate(data_[i]);
-		if (fitness[static_cast<fitnessIndex_t>(i)] == max_eval) one_ = true;
+	basic_genetic::statistics();
+	for (auto f : fitness) {
+		if (f == max_eval) one_ = true;
 	}
-	sum_ = std::accumulate(fitness.begin(), fitness.end(), 0);
-	max_ = *std::max_element(fitness.begin(), fitness.end());
-	auto avg = avg_ = sum_ / population_;
-	mad_ = std::accumulate(fitness.begin(), fitness.end(), 0.0,
-												 [avg](const auto& cursum, const auto& x) {
-													 return cursum + abs(x - avg);
-												 });
-	mad_ /= population_;
 }
 
 void GeneticString::setCorrect(std::string arg) {

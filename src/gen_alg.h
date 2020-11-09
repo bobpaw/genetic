@@ -61,7 +61,7 @@ public:
 
 private:
 	virtual int evaluate(const std::string&) = 0;
-	virtual void recombine(std::string&, std::string&) = 0;
+	virtual void recombine(std::string&, std::string&);
 	virtual void mutate(dataIndex_t) = 0;
 	fitnessIndex_t rand_genome(void);
 };

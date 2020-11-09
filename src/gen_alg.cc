@@ -43,6 +43,25 @@ void basic_genetic::setPop_size(int size) {
 	population_ = size;
 }
 
+void basic_genetic::recombine(std::string& genotype_a,
+															std::string& genotype_b) {
+	int length = std::min(genotype_a.size(), genotype_b.size());
+	if (length == 0) {
+		if (length == genotype_a.size()) {
+			genotype_a = genotype_b;  // Both are now b
+		} else {
+			genotype_b = genotype_a;  // Both are now a
+		}
+	} else {
+		auto ret = std::make_pair(std::string(), std::string());
+		int split = random() % length;
+		ret.first = genotype_b.substr(0, split) + genotype_a.substr(split);
+		ret.second = genotype_a.substr(0, split) + genotype_b.substr(split);
+		genotype_a = ret.first;
+		genotype_b = ret.second;
+	}
+}
+
 basic_genetic::fitnessIndex_t basic_genetic::rand_genome(void) {
 	fitnessIndex_t ret = 0;
 	if (sum_ == 0) {

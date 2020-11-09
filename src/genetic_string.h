@@ -13,7 +13,6 @@ private:
 	bool one_{false};
 
 	int evaluate(const std::string& genotype);
-	void recombine(std::string& genotype_a, std::string& genotype_b);
 	void mutate(dataIndex_t i);
 
 public:
