@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.11) # FetchContent
 project(genetic VERSION 0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
-cmake_policy(SET CMP0067 NEW) # Force CMake to observe CXX_STANDARD in checks
+cmake_policy(SET CMP0067 NEW) # Force CMake to observe CXX_STANDARD in checks.
+cmake_policy(SET CMP0115 NEW) # Require file extensions in executable lists.
 
 ##
 ## HAVE is for symbols and headers
@@ -96,7 +97,7 @@ endif()
 if (CURSES_FOUND OR PDCURSES_FOUND)
 	set(CMAKE_REQUIRED_INCLUDES ${CURSES_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_LIBRARIES ${CURSES_LIBRARIES})
-	check_cxx_symbol_exists(start_color ${CURSES_HEADER} HAVE_CURSES_COLOR)
+	check_cxx_symbol_exists(start_color "${CURSES_HEADER}" HAVE_CURSES_COLOR)
 	if (HAVE_CURSES_COLOR)
 		message(STATUS "Found color support for curses")
 	else()
