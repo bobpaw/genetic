@@ -1,9 +1,11 @@
+#include <vector>
+
 #include "beef.h"
 
 namespace beef {
 void Interpreter::run() {
-	char heap[BEEF_HEAP_HEIGHT] = {0};
-	char* ptr = heap;
+	std::vector<char> heap(height_, '\0');
+	auto ptr = heap.begin();
 	std::size_t iptr = 0;
 
 	while (iptr < program_.size()) {
@@ -11,14 +13,14 @@ void Interpreter::run() {
 		case '+': ++(*ptr); break;
 		case '-': --(*ptr); break;
 		case '<':
-			if (ptr == heap)
-				ptr = heap + (BEEF_HEAP_HEIGHT - 1);
+			if (ptr == heap.begin())
+				ptr = heap.end() - 1;
 			else
 				--ptr;
 			break;
 		case '>':
-			if (ptr == heap + BEEF_HEAP_HEIGHT - 1)
-				ptr = heap;
+			if (ptr == heap.end() - 1)
+				ptr = heap.begin();
 			else
 				++ptr;
 			break;
