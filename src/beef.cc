@@ -22,7 +22,7 @@ void Interpreter::run() {
 			else
 				++ptr;
 			break;
-		case ',': *ptr = input_(); break;
+		case ',': *ptr = get_input(); break;
 		case '.': output(*ptr); break;
 		case '[':
 			if (*ptr == 0) {

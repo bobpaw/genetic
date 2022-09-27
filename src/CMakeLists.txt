@@ -4,6 +4,10 @@ if (NOT HAVE_GETOPT)
 add_library(getopt_rpc STATIC getopt_rpc.c getopt_rpc.h)
 endif()
 
+add_library(beef STATIC beef.h beef.cc)
+add_executable(beef_main beef_main.cc beef.h)
+target_link_libraries(beef_main beef)
+
 add_library(gen_alg STATIC gen_alg.cc gen_alg.h)
 # target_compile_features(obj1 PUBLIC cxx_auto_type $<IF:$<COMPILE_FEATURES:cxx_return_type_deduction>,cxx_return_type_deduction,cxx_trailing_return_types> cxx_noexcept cxx_nullptr cxx_decltype)
 add_library(genetic_string STATIC genetic_string.cc genetic_string.h)

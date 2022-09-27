@@ -16,8 +16,12 @@
 namespace beef {
 class Interpreter {
 public:
-	Interpreter(std::string program): program_(std::move(program)) {}
-	Interpreter(): program_() {}
+	using input_type = std::function<char()>;
+	Interpreter(std::string program, input_type input):
+			program_(std::move(program)), input_(input) {}
+  Interpreter(std::string program):
+    Interpreter(program, {}) {}
+	Interpreter(): Interpreter("", {}) {}
 
 	void run();
 	inline const std::string& output() const { return output_; }
@@ -26,8 +30,15 @@ public:
 private:
 	std::string program_;
 	std::string output_;
-	std::function<char()> input_;
+	input_type input_;
 
+  inline char get_input() {
+    if (input_) {
+      return input_();
+    } else {
+      return '\0';
+    }
+  }
 	inline void output(char c) { output_ += c; }
 };
 }  // namespace beef
