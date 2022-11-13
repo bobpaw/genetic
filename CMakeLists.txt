@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.11) # FetchContent
+cmake_minimum_required(VERSION 3.13) # CMP0079
 project(genetic VERSION 0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 cmake_policy(SET CMP0067 NEW) # Force CMake to observe CXX_STANDARD in checks.
 cmake_policy(SET CMP0115 NEW) # Require file extensions in executable lists.
+cmake_policy(SET CMP0079 NEW) # target_link_libraries across directories.
 
 ##
 ## HAVE is for symbols and headers

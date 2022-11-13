@@ -14,11 +14,4 @@ target_include_directories(genetic PRIVATE "${CURSES_INCLUDE_DIRS}")
 target_compile_features(genetic PRIVATE cxx_lambdas cxx_decltype)
 target_link_libraries(genetic genetic_string gen_alg $<IF:$<BOOL:${HAVE_GETOPT}>,,getopt_rpc> "${CURSES_LIBRARIES}")
 
-# Tests
-add_executable(simple_test EXCLUDE_FROM_ALL simple_test.cc)
-target_link_libraries(simple_test PRIVATE genetic_string)
-add_executable(random_inrange EXCLUDE_FROM_ALL random_inrange.cc rpc/fakerandom.h)
-add_executable(expand_test EXCLUDE_FROM_ALL expand_test.cc genetic_string)
-target_link_libraries(expand_test PRIVATE genetic_string)
-
 add_subdirectory(implementations EXCLUDE_FROM_ALL)

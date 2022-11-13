@@ -1,5 +1,5 @@
 #include <iostream>
-#include "fakerandom.h"
+#include "rpc/fakerandom.h"
 
 int main() {
 	fakerandom::rand_device random(0, 100);

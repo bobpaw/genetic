@@ -1,3 +1,13 @@
+# Test targets
+
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
+add_executable(simple_test EXCLUDE_FROM_ALL simple_test.cc)
+target_link_libraries(simple_test PRIVATE genetic_string)
+add_executable(random_inrange EXCLUDE_FROM_ALL random_inrange.cc ${PROJECT_SOURCE_DIR}/src/rpc/fakerandom.h)
+add_executable(expand_test EXCLUDE_FROM_ALL expand_test.cc)
+target_link_libraries(expand_test PRIVATE genetic_string)
+
 add_test(
 	NAME
 		sanity
