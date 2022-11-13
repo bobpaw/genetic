@@ -1,12 +1,8 @@
 include_directories(.)
 
 if (NOT HAVE_GETOPT)
-add_library(getopt_rpc STATIC getopt_rpc.c getopt_rpc.h)
+add_library(getopt_rpc STATIC rpc/getopt_rpc.c rpc/getopt_rpc.h)
 endif()
-
-add_library(beef STATIC beef.h beef.cc)
-add_executable(beef_main beef_main.cc beef.h)
-target_link_libraries(beef_main beef)
 
 add_library(gen_alg STATIC gen_alg.cc gen_alg.h)
 # target_compile_features(obj1 PUBLIC cxx_auto_type $<IF:$<COMPILE_FEATURES:cxx_return_type_deduction>,cxx_return_type_deduction,cxx_trailing_return_types> cxx_noexcept cxx_nullptr cxx_decltype)
@@ -21,8 +17,8 @@ target_link_libraries(genetic genetic_string gen_alg $<IF:$<BOOL:${HAVE_GETOPT}>
 # Tests
 add_executable(simple_test EXCLUDE_FROM_ALL simple_test.cc)
 target_link_libraries(simple_test PRIVATE genetic_string)
-add_executable(random_inrange EXCLUDE_FROM_ALL random_inrange.cc fakerandom.h)
+add_executable(random_inrange EXCLUDE_FROM_ALL random_inrange.cc rpc/fakerandom.h)
 add_executable(expand_test EXCLUDE_FROM_ALL expand_test.cc genetic_string)
 target_link_libraries(expand_test PRIVATE genetic_string)
 
-add_subdirectory(mancala)
+add_subdirectory(implementations EXCLUDE_FROM_ALL)
