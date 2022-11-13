@@ -1,27 +1,13 @@
+# OS Specific
+.DS_Store
+
 # IDEs
 .vs/
 .vscode/
 
-# Stuff used by autotools
-autom4te.cache/
-autoscan.log
-.deps/
-config.log
-config.status
-configure
-Makefile
-config.h
-Makefile.in
-aclocal.m4
-stamp-h1
+# Build system
 build/
+config.h
 
-# Executables
-src/mancala/mancala
-src/genetic
-
-# Object files
-*.o
-*.a
-
+# Backups
 *~
