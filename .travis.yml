@@ -24,11 +24,13 @@ addons:
     packages:
     - ncurses-dev
     - cmake
+    update: true
   homebrew:
     packages:
     - ncurses
     - cmake
     - ccache
+    update: true
 
 # Build Matrix
 matrix:
