@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -e
+set -ev
 
 if [ "${TRAVIS_OS_NAME}" = "windows" ]; then
 	choco install make

@@ -30,7 +30,6 @@ addons:
     - ncurses
     - cmake
     - ccache
-    update: true
 
 # Build Matrix
 matrix:
