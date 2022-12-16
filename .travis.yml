@@ -24,6 +24,7 @@ addons:
     packages:
     - ncurses-dev
     - cmake
+    update: true
   homebrew:
     packages:
     - ncurses
@@ -92,7 +93,7 @@ before_script:
 
 # Actually check if it works
 script:
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
   - cmake --build .
   - ctest -j2 -VV
 #  - if [ -x "src/simple_test" ]; then make clean; cd src; make CXXFLAGS=-DVALGRIND_DEBUG simple_test; valgrind --leak-check=full --show-leak-kinds=all ./simple_test; fi

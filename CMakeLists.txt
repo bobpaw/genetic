@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.13) # CMP0079
+cmake_minimum_required(VERSION 3.11) # FetchContent
 project(genetic VERSION 0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 cmake_policy(SET CMP0067 NEW) # Force CMake to observe CXX_STANDARD in checks.
-cmake_policy(SET CMP0115 NEW) # Require file extensions in executable lists.
-cmake_policy(SET CMP0079 NEW) # target_link_libraries across directories.
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.20)
+	cmake_policy(SET CMP0115 NEW) # Require file extensions in executable lists.
+endif()
 
 ##
 ## HAVE is for symbols and headers
@@ -108,7 +110,7 @@ endif()
 
 find_library(MATH_FOUND m)
 
-if ($<VERSION_GREATER_EQUAL:"${CMAKE_VERSION}","3.12">)
+if ("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.12")
 	add_compile_definitions(HAVE_CONFIG_H)
 else()
 	add_compile_options(-DHAVE_CONFIG_H)
@@ -117,16 +119,4 @@ endif()
 configure_file("${PROJECT_SOURCE_DIR}/config.h.in" "${PROJECT_BINARY_DIR}/config.h" ESCAPE_QUOTES @ONLY)
 configure_file("${PROJECT_SOURCE_DIR}/src/correct_curses.h.in" "${PROJECT_BINARY_DIR}/src/correct_curses.h" ESCAPE_QUOTES @ONLY)
 
-# Assumes your directory tree is as follows
-# CMakeLists.txt
-# test
-# + CMakeLists.txt with build info
-# src
-# + CMakeLists.txt with test build info and other test stuff
 add_subdirectory(src)
-
-
-# Only enable testing if this is the top-level project or it's a test build
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/" AND (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR GENETIC_BUILD_TESTING) AND BUILD_TESTING)
-	add_subdirectory(test)
-endif()
