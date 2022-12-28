@@ -31,10 +31,7 @@ jobs:
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
-        vcpkg install ncurses
-      env:
-        VCPKG_DEFAULT_TRIPLET: x64-mingw-dynamic
-        VCPKG_DEFAULT_HOST_TRIPLET: x64-mingw-dynamic
+        vcpkg install pdcurses
       shell: sh
     - name: CMake Configure
       run: |
