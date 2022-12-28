@@ -39,16 +39,21 @@ include(CheckCXXSymbolExists)
 
 # Fetch PDCurses
 FetchContent_DECLARE(
-	PDCurses
+	FindPDCurses
 	GIT_REPOSITORY https://github.com/bobpaw/FindPDCurses.git
 	GIT_TAG v1.0
 	GIT_SHALLOW true
 )
 
-FetchContent_GetProperties(PDCurses)
-if(NOT PDCurses_POPULATED)
-  FetchContent_Populate(PDCurses)
-  list(APPEND CMAKE_MODULE_PATH ${NAME}_SOURCE_DIR})
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
+	FetchContent_MakeAvailable(FindPDCurses)
+	list(APPEND CMAKE_MODULE_PATH FindPDCurses_SOURCE_DIR)
+else()
+	FetchContent_GetProperties(FindPDCurses)
+	if(NOT FindPDCurses_POPULATED)
+	  FetchContent_Populate(FindPDCurses)
+  	list(APPEND CMAKE_MODULE_PATH FindPDCurses_SOURCE_DIR)
+	endif()
 endif()
 
 if ($<COMPILE_FEATURES:cxx_noexcept>)
@@ -77,16 +82,12 @@ if (USE_PDCURSES)
 	set(PDCURSES_FOUND YES)
 	set(HAVE_CURSES_H YES)
 else ()
-	if(DEFINED ENV{TRAVIS_OS_NAME} AND ("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows"))
-		find_package(Curses PATHS "${PROJECT_SOURCE_DIR}/ncurses-6.1")
-	else()
-		find_package(Curses)
-		if (NOT CURSES_FOUND)
-			find_package(PDCurses MODULE REQUIRED)
-			set(CURSES_LIBRARIES "${PDCURSES_LIBRARIES}")
-			set(CURSES_INCLUDE_DIRS "${PDCURSES_INCLUDE_DIR}")
-			mark_as_advanced(CURSES_LIBRARIES CURSES_INCLUDE_DIRS)
-		endif()
+	find_package(Curses)
+	if (NOT CURSES_FOUND)
+		find_package(PDCurses MODULE REQUIRED)
+		set(CURSES_LIBRARIES "${PDCURSES_LIBRARIES}")
+		set(CURSES_INCLUDE_DIRS "${PDCURSES_INCLUDE_DIR}")
+		mark_as_advanced(CURSES_LIBRARIES CURSES_INCLUDE_DIRS)
 	endif()
 endif ()
 if (CURSES_HAVE_NCURSES_CURSES_H)
