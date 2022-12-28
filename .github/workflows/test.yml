@@ -28,6 +28,14 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y ncurses-dev cmake
+    - name: Windows Cache
+      id: cache
+      if: matrix.os == 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        key: ${{ matrix.os }}-${{ matrix.generator }}-${{ matrix.compiler }}
+        path: |
+          ./ncurses-6.1
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
@@ -35,7 +43,9 @@ jobs:
         wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
         tar zxf ncurses-6.1.tar.gz
         cd ncurses-6.1
-        sh -x configure --without-pkg-config && make -j2
+        echo "${{ steps.cache.outputs.cache-hit }}"
+        [ "${{ steps.cache.outputs.cache-hit }}" = "true" ] && ./configure --without-pkg-config
+        make -j2
       shell: sh
     - name: CMake Configure
       run: |
