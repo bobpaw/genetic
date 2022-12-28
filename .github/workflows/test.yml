@@ -39,7 +39,7 @@ jobs:
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
-        choco install -yr make wget
+        choco install -y --limit-output make wget
         wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
         tar zxf ncurses-6.1.tar.gz
         cd ncurses-6.1
