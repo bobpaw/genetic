@@ -39,12 +39,12 @@ jobs:
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
-        choco install make wget
+        choco install -yr make wget
         wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
         tar zxf ncurses-6.1.tar.gz
         cd ncurses-6.1
         echo "${{ steps.cache.outputs.cache-hit }}"
-        [ "${{ steps.cache.outputs.cache-hit }}" = "true" ] && ./configure --without-pkg-config
+        [ "${{ steps.cache.outputs.cache-hit }}" != "true" ] && ./configure --without-pkg-config
         make -j2
       shell: sh
     - name: CMake Configure
