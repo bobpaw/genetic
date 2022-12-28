@@ -28,7 +28,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: apt
-        paths: /var/cache/apt/archives
+        path: /var/cache/apt/archives
     - name: Install APT packages.
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -39,7 +39,7 @@ jobs:
       uses: actions/cache@v3
       with:
         key: vcpkg-${{ matrix.compiler }}
-        paths: C:\vcpkg\archives
+        path: C:\vcpkg\archives
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
