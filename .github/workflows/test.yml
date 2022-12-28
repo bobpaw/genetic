@@ -1,0 +1,42 @@
+name: Test Workflow
+
+on:
+  push:
+    paths: [ '.github/workflows/test.yml', 'CMakeLists.txt', 'src/**' ]
+  pull_request:
+    paths: [ '.github/workflows/test.yml', 'CMakeLists.txt', 'src/**' ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        generator: [ 'Ninja', 'Unix Makefiles' ]
+        compiler: [ 'gcc', 'clang' ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Install APT packages.
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt update
+        sudo apt install -y ncurses-dev cmake
+    - name: Install Windows packages.
+      if: matrix.os == 'windows-laatest'
+      run: |
+        choco install make
+        wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
+        tar zxf ncurses-6.1.tar.gz
+        cd ncurses-6.1
+        sh -x configure --without-pkg-config && make -j2
+      shell: sh
+    - run: cmake --version
+    - run: mkdir build && cd build
+    - run: cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
+      env:
+        CXX: ${{ matrix.compiler }}
+        GENERATOR: ${{ matrix.generator }}
+    - run: cmake --build .
+    - run: ctest -j2 -VV
