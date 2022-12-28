@@ -1,11 +1,23 @@
-#include <vector>
+/**
+ * @file beef.cc
+ * @author Aiden Woodruff
+ * @brief Beef Interpreter implementation file.
+ * 
+ * @copyright Copyright (c) Aiden Woodruff 2022.
+ * 
+ */
 
 #include "beef.h"
 
 namespace beef {
+
+void Interpreter::clear_memory() {
+	// Consider replacing memory_ with char* and using memset.
+	for (std::size_t i = 0; i < height_; ++i) memory_[i] = '\0';
+}
+
 void Interpreter::run() {
-	std::vector<char> heap(height_, '\0');
-	auto ptr = heap.begin();
+	auto ptr = memory_.begin();
 	std::size_t iptr = 0;
 
 	while (iptr < program_.size()) {
@@ -13,14 +25,14 @@ void Interpreter::run() {
 		case '+': ++(*ptr); break;
 		case '-': --(*ptr); break;
 		case '<':
-			if (ptr == heap.begin())
-				ptr = heap.end() - 1;
+			if (ptr == memory_.begin())
+				ptr = memory_.end() - 1;
 			else
 				--ptr;
 			break;
 		case '>':
-			if (ptr == heap.end() - 1)
-				ptr = heap.begin();
+			if (ptr == memory_.end() - 1)
+				ptr = memory_.begin();
 			else
 				++ptr;
 			break;
@@ -28,7 +40,7 @@ void Interpreter::run() {
 		case '.': output(*ptr); break;
 		case '[':
 			if (*ptr == 0) {
-        ++iptr;
+				++iptr;
 				for (int nest = 0; iptr < program_.size(); ++iptr) {
 					if (program_[iptr] == ']' && nest == 0) break;
 					if (program_[iptr] == '[') ++nest;
@@ -38,7 +50,7 @@ void Interpreter::run() {
 			break;
 		case ']':
 			if (*ptr != 0) {
-        --iptr;
+				--iptr;
 				for (int nest = 0; iptr != 0; --iptr) {
 					if (program_[iptr] == '[' && nest == 0) break;
 					if (program_[iptr] == '[') --nest;
@@ -54,6 +66,5 @@ void Interpreter::run() {
 		++iptr;
 	}
 }
-
 
 }  // namespace beef
