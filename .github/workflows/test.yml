@@ -29,7 +29,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ncurses-dev cmake
     - name: Install Windows packages.
-      if: matrix.os == 'windows-laatest'
+      if: matrix.os == 'windows-latest'
       run: |
         choco install make
         wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
@@ -37,9 +37,9 @@ jobs:
         cd ncurses-6.1
         sh -x configure --without-pkg-config && make -j2
       shell: sh
-    - run: cmake --version
     - name: CMake Configure
       run: |
+        cmake --version
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
       env:
