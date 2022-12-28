@@ -33,10 +33,21 @@ jobs:
         sh -x configure --without-pkg-config && make -j2
       shell: sh
     - run: cmake --version
-    - run: mkdir build && cd build
-    - run: cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
+    - name: CMake Configure
+      run: |
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
       env:
         CXX: ${{ matrix.compiler }}
         GENERATOR: ${{ matrix.generator }}
-    - run: cmake --build .
-    - run: ctest -j2 -VV
+      shell: sh
+    - name: CMake Build
+      run: |
+        cd build
+        cmake --build .
+      shell: sh
+    - name: CTest
+      run: |
+        cd build
+        ctest -j2 -VV
+      shell: sh
