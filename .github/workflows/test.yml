@@ -12,7 +12,12 @@ jobs:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
         generator: [ 'Ninja', 'Unix Makefiles' ]
-        compiler: [ 'gcc', 'clang' ]
+        compiler: [ 'g++', 'clang++' ]
+        exclude:
+        - os: windows-latest
+          generator: 'Unix Makefiles'
+        - os: windows-latest
+          compiler: clang++
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -21,8 +26,8 @@ jobs:
     - name: Install APT packages.
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt update
-        sudo apt install -y ncurses-dev cmake
+        sudo apt-get update
+        sudo apt-get install -y ncurses-dev cmake
     - name: Install Windows packages.
       if: matrix.os == 'windows-laatest'
       run: |
