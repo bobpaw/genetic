@@ -28,23 +28,33 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y ncurses-dev cmake
-    - name: Windows Cache
-      id: cache
+    - name: Windows Choco Cache
       if: matrix.os == 'windows-latest'
       uses: actions/cache@v3
       with:
-        key: ${{ matrix.os }}-${{ matrix.generator }}-${{ matrix.compiler }}
+        key: choco
+        path: ./.choco_cache
+    - name: Windows Curses Cache
+      id: curses-cache
+      if: matrix.os == 'windows-latest'
+      uses: actions/cache@v3
+      with:
+        key: curses-${{ matrix.os }}-${{ matrix.compiler }}
         path: |
           ./ncurses-6.1
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
-        choco install -y --limit-output make wget
+        choco install -y --limit-output --no-progress --cache .choco_cache/ make wget patch
         wget -q https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
         tar zxf ncurses-6.1.tar.gz
         cd ncurses-6.1
-        echo "${{ steps.cache.outputs.cache-hit }}"
-        [ "${{ steps.cache.outputs.cache-hit }}" != "true" ] && ./configure --without-pkg-config
+        echo "${{ steps.curses-cache.outputs.cache-hit }}"
+        if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ];
+          # Patch Makefiles to prevent word splitting.
+          find . -name Makefile.in -exec sed -i 's/$(SHELL)/"$(SHELL)"/' \{\} \;
+          ./configure --without-pkg-config
+        fi
         make -j2
       shell: sh
     - name: CMake Configure
