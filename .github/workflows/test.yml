@@ -23,12 +23,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Cache APT packages.
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/cache@v3
-      with:
-        key: apt
-        path: /var/cache/apt/archives
     - name: Install APT packages.
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -43,7 +37,7 @@ jobs:
     - name: Install Windows packages.
       if: matrix.os == 'windows-latest'
       run: |
-        vcpkg install pdcurses --binarysource=files,C:\vcpkg\archives
+        vcpkg install pdcurses --binarysource=files,C:/vcpkg/archives
       shell: sh
     - name: CMake Configure
       run: |
