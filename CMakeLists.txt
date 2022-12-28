@@ -47,12 +47,12 @@ FetchContent_DECLARE(
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
 	FetchContent_MakeAvailable(FindPDCurses)
-	list(APPEND CMAKE_MODULE_PATH FindPDCurses_SOURCE_DIR)
+	list(APPEND CMAKE_MODULE_PATH "${FindPDCurses_SOURCE_DIR}")
 else()
 	FetchContent_GetProperties(FindPDCurses)
 	if(NOT FindPDCurses_POPULATED)
 	  FetchContent_Populate(FindPDCurses)
-  	list(APPEND CMAKE_MODULE_PATH FindPDCurses_SOURCE_DIR)
+  	list(APPEND CMAKE_MODULE_PATH "${FindPDCurses_SOURCE_DIR}")
 	endif()
 endif()
 

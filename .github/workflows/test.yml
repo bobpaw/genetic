@@ -43,7 +43,7 @@ jobs:
       run: |
         cmake --version
         mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=TRUE -DCMAKE_BUILD_PARALLEL_LEVEL=2 -DCMAKE_VERBOSE_MAKEFILE=TRUE -DFETCHCONTENT_QUIET=OFF ..
       env:
         CXX: ${{ matrix.compiler }}
         GENERATOR: ${{ matrix.generator }}
